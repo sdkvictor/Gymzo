@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Gymzo</title>
+        <title>Routines - Gymzo</title>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content:ie="edge">
         <link href="./css/style.css" type="text/css" rel="stylesheet"/>
@@ -15,26 +15,26 @@
             </ul>
         </div>
         <div id="myRoutine">
-            <h1>My Routine</h1>
-            <h2>Weekday</h2>
+            <h1> My Routines </h1>
+            <div>
             <table>
                 <tr>
-                    <th>Exercise</th>
-                    <th>Sets</th>
-                    <th>Repetitions</th>
-                    <th>Weight</th>
+                    <td class="routineName">Routine Name 1</td>
+                    <td> </td>
+                    <td> <button id="editRoutinebtn" class="btn btn-primary ">Edit</button> </td>
+                    <td> Default </td>
                 </tr>
                 <tr>
-                    <td id="ex1"> Exercise 1</td>
-                    <td id="sets1"> 5</td>
-                    <td id="rep1"> 10 </td>
-                    <td id="weight1"><input type="text" class="weightIn"/> </td>
+                    <td class="routineName">Routine Name 2</td>
+                    <td> </td>
+                    <td> <button id="editRoutinebtn" class="btn btn-primary ">Edit</button> </td>
+                    <td> <button id="setDefaultbtn" class="btn btn-primary "> Set Default </button> </td>
                 </tr>
             </table>
+            </div>
             <div id="routineButtons">
-                <p> <button id="saveWeight" class="btn btn-primary ">Save</button> </p>
-                <p> <button id="seeRoutines" class="btn btn-primary ">See Routines</button> </p>
-                 
+                <p></p>
+                <p> <button id="addRoutinebtn" class="btn btn-primary ">Add Routine</button> </p>
             </div>
         </div>
     </body>
