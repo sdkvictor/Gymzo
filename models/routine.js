@@ -1,11 +1,23 @@
 let mongoose = require("mongoose");
-let { exerciseSchema } = require("./exercise");
 
 let routineSchema = mongoose.Schema({
   name: { type: String },
-  exercises: [exerciseSchema]
+  personId: { type: String }
 });
 
+let Routine = mongoose.Model("routines", routineSchema);
+
+let routineController = {
+  getAll: function() {
+    Routine.find()
+      .then(routines => {
+        return routines;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  }
+};
 module.exports = {
-  routineSchema
+  routineController
 };

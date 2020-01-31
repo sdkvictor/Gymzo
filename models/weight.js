@@ -5,6 +5,19 @@ let weightSchema = mongoose.Schema({
   measureDate: { type: Date }
 });
 
+let Weight = mongoose.Model("weights", weightSchema);
+
+let weightController = {
+  getAll: function() {
+    Weight.find()
+      .then(weights => {
+        return weights;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  }
+};
 module.exports = {
-  weightSchema
+  weightController
 };

@@ -5,9 +5,24 @@ let exerciseSchema = mongoose.Schema({
   sets: { type: Number },
   reps: { type: Number },
   weight: { type: Number },
-  weekday: [String]
+  weekday: [String],
+  routineId: { type: String }
 });
 
+let Excercise = mongoose.Model("excercises", exerciseSchema);
+
+let exerciseController = {
+  getAll: function() {
+    Excercise.find()
+      .then(ex => {
+        return ex;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  }
+};
+
 module.exports = {
-  exerciseSchema
+  exerciseController
 };
