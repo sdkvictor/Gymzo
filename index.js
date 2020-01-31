@@ -15,7 +15,38 @@ let { weightController } = require("./models/weight");
 
 //Variables
 let { DATABASE_URL, PORT, JWTTOKEN } = require("./config");
+/*
+POST
+login
+createUser
+createRoutine:/:userId
+createInstExercise/:exerciseId
+createExercise/:routineId
+createWeight/:userId
 
+GET
+validate
+profile/:userid/
+getMyRoutine/:userid/?day&month&year
+getAllRoutines/:userid
+getLastWeight/:userId
+getAllExercises/:routineID
+getExerciseWeight/:instanceExerciseId
+getExerciseDate/:instanceExerciseId
+
+
+PUT
+modifyProfile/:userId
+modifyWeight//:pesoId
+modifyRoutine//:routineId
+modifyExercise/:exerciseId
+modifyInstExercise/:instanceExerciseId
+DELETE
+deleteWeight/:pesoId
+deleteRoutine/:routineId
+deleteExercise/:exerciseId
+deleteInstExercise/:instanceExerciseId
+*/
 let app = express();
 app.use(express.static("public"));
 app.use(morgan("dev"));
