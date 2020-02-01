@@ -8,11 +8,11 @@ let weightSchema = mongoose.Schema({
   measureDate: { type: Date }
 });
 
-let Weight = mongoose.Model("weights", weightSchema);
+let Weight = mongoose.model("weights", weightSchema);
 
 let weightController = {
   getAll: function() {
-    Weight.find()
+    return Weight.find()
       .then(weights => {
         return weights;
       })
@@ -21,7 +21,7 @@ let weightController = {
       });
   },
   getByUserId: function(id) {
-    Weight.find({ userId: id })
+    return Weight.find({ userId: id })
       .then(records => {
         return records;
       })
@@ -30,7 +30,7 @@ let weightController = {
       });
   },
   getById: function(id) {
-    Weight.findOne({ _id: id })
+    return Weight.findOne({ _id: mongoose.Types.ObjectId(id) })
       .then(record => {
         return record;
       })
@@ -39,7 +39,7 @@ let weightController = {
       });
   },
   delete: function(id) {
-    return Weight.findOneAndRemove({ _id: id })
+    return Weight.findOneAndRemove({ _id: mongoose.Types.ObjectId(id) })
       .then(weight => {
         return weight;
       })
@@ -57,7 +57,10 @@ let weightController = {
       });
   },
   update: function(id, newWeight) {
-    return Weight.findOneAndUpdate({ _id: id }, newWeight)
+    return Weight.findOneAndUpdate(
+      { _id: mongoose.Types.ObjectId(id) },
+      newWeight
+    )
       .then(weight => {
         return weight;
       })
