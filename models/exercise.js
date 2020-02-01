@@ -32,8 +32,35 @@ let exerciseController = {
         throw new Error(err);
       });
   },
+  getById: function(id) {
+    Exercise.findOne({ _id: id })
+      .then(exercise => {
+        return exercise;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  },
   delete: function(id) {
     return Exercise.findOneAndRemove({ _id: id })
+      .then(exercise => {
+        return exercise;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
+  },
+  create: function(newExercise) {
+    return Exercise.create(newExercise)
+      .then(exercise => {
+        return exercise;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
+  },
+  update: function(id, newExercise) {
+    return InstanceExercise.findOneAndUpdate({ _id: id }, newExercise)
       .then(exercise => {
         return exercise;
       })

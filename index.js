@@ -4,6 +4,7 @@ let morgan = require("morgan");
 let bodyParser = require("body-parser");
 let jsonParser = bodyParser.json();
 let mongoose = require("mongoose");
+let uuid = require("uuid");
 let jwt = require("jsonwebtoken");
 
 //Models
@@ -15,17 +16,17 @@ let { weightController } = require("./models/weight");
 
 //Variables
 let { DATABASE_URL, PORT, JWTTOKEN } = require("./config");
+
 /*
 
 POST
 
-createUser
-createRoutine:/:userId
-createInstExercise/:exerciseId
-createExercise/:routineId
-createWeight/:userId
-
-login
+* createUser
+* createRoutine:/:userId
+* createInstExercise/:exerciseId
+* createExercise/:routineId
+* createWeight/:userId
+* login
 
 GET
 
@@ -34,19 +35,18 @@ GET
 * getAllWeights/:userId
 * getAllExercises/:routineID
 * getAllInstanceExercises/:exerciseId
-
-validate
-getMyRoutine/:userid/?day&month&year
-getExerciseWeight/:instanceExerciseId
-getExerciseDate/:instanceExerciseId
+* validate
++ getMyRoutine/:userid/?day&month&year
++ getExerciseWeight/:instanceExerciseId
++ getExerciseDate/:instanceExerciseId
 
 PUT
 
-modifyProfile/:userId
-modifyWeight//:pesoId
-modifyRoutine//:routineId
-modifyExercise/:exerciseId
-modifyInstExercise/:instanceExerciseId
+* updateProfile/:userId
+* updateWeight//:pesoId
+* updateRoutine//:routineId
+* updateExercise/:exerciseId
+* updateInstExercise/:instanceExerciseId
 
 DELETE
 
@@ -59,11 +59,397 @@ DELETE
 */
 
 let app = express();
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,Authorization"
+  );
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,PATCH,DELETE");
+
+  if (req.method === "OPTIONS") {
+    return res.send(204);
+  }
+  next();
+});
+
 app.use(express.static("public"));
 app.use(morgan("dev"));
 
+app.put("/gymzoAPI/updateUser", jsonParser, (req, res) => {
+  let userId = req.query.userId;
+
+  if (userId == undefined) {
+    res.statusMessage = "No existe el userId";
+    return res.status(406).send();
+  }
+
+  userController
+    .getByUserId(userId)
+    .then(user => {
+      let resUser = req.body;
+
+      let updatedUser = {
+        name: resUser.name || user.name,
+        email: resUser.email || user.email,
+        password: resUser.password || user.password,
+        dateOfBirth: resUser.dateOfBirth || user.dateOfBirth,
+        sex: resUser.sex || user.sex,
+        height: resUser.height || user.height,
+        defaultRoutine: resUser.defaultRoutine || user.defaultRoutine,
+        weightId: resUser.weightId || user.weightId
+      };
+
+      userController
+        .update(user._id, updatedUser)
+        .then(resUs => {
+          res.statusMessage = "Updated User";
+          return res.status(200).json(resUs);
+        })
+        .catch(err => {
+          console.log(err);
+          res.statusMessage = "Problemas con el servidor";
+          return res.status(500).send();
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "No se encontro un usuario con este id";
+      res.status(406).send();
+    });
+});
+
+app.put("/gymzoAPI/updateWeight", jsonParser, (req, res) => {
+  let weightId = req.query.weightId;
+
+  if (weightId == undefined) {
+    res.statusMessage = "No existe el weightId";
+    return res.status(406).send();
+  }
+
+  weightController
+    .getById(weightId)
+    .then(weight => {
+      let resWeight = req.body;
+
+      let updatedWeight = {
+        userId: resWeight.userId || weight.userId,
+        weight: resWeight.weight || weight.weight,
+        measureDate: resWeight.measureDate || weight.measureDate
+      };
+
+      weightController
+        .update(weight._id, updatedWeight)
+        .then(resWe => {
+          res.statusMessage = "Updated Weight";
+          return res.status(200).json(resWe);
+        })
+        .catch(err => {
+          console.log(err);
+          res.statusMessage = "Problemas con el servidor";
+          return res.status(500).send();
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "No se encontro un peso con este id";
+      res.status(406).send();
+    });
+});
+
+app.put("/gymzoAPI/updateExercise", jsonParser, (req, res) => {
+  let exerciseId = req.query.exerciseId;
+
+  if (exerciseId == undefined) {
+    res.statusMessage = "No existe el exerciseId";
+    return res.status(406).send();
+  }
+
+  exerciseController
+    .getById(exerciseId)
+    .then(exercise => {
+      let resExercise = req.body;
+
+      let updatedExercise = {
+        name: resExercise.name || exercise.name,
+        sets: resExercise.sets || exercise.sets,
+        reps: resExercise.reps || exercise.reps,
+        weight: resExercise.weight || exercise.weight,
+        userId: resExercise.userId || exercise.userId,
+        weekday: resExercise.weekday || exercise.weekday,
+        routineId: resExercise.routineId || exercise.routineId
+      };
+
+      exerciseController
+        .update(exercise._id, updatedExercise)
+        .then(resEx => {
+          res.statusMessage = "Updated Exercise";
+          return res.status(200).json(resEx);
+        })
+        .catch(err => {
+          console.log(err);
+          res.statusMessage = "Problemas con el servidor";
+          return res.status(500).send();
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "No se encontro un ejercicio con este id";
+      res.status(406).send();
+    });
+});
+
+app.put("/gymzoAPI/updateInstanceExercise", jsonParser, (req, res) => {
+  let instanceExerciseId = req.query.instanceExerciseId;
+
+  if (instanceExerciseId == undefined) {
+    res.statusMessage = "No existe el instanceExerciseId";
+    return res.status(406).send();
+  }
+
+  instanceExerciseController
+    .getById(instanceExerciseId)
+    .then(iExercise => {
+      let resExercise = req.body;
+
+      let updatedInstanceExercise = {
+        startDate: resExercise.startDate || iExercise.startDate,
+        finishDate: resExercise.finishDate || iExercise.finishDate,
+        exerciseId: resExercise.exerciseId || iExercise.exerciseId
+      };
+
+      instanceExerciseController
+        .update(iExercise._id, updatedInstanceExercise)
+        .then(resIEx => {
+          res.statusMessage = "Updated Instance Exercise";
+          return res.status(200).json(resIEx);
+        })
+        .catch(err => {
+          console.log(err);
+          res.statusMessage = "Problemas con el servidor";
+          return res.status(500).send();
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage =
+        "No se encontro una instancia de ejercicio con este id";
+      res.status(406).send();
+    });
+});
+
+app.put("/gymzoAPI/updateRoutine", jsonParser, (req, res) => {
+  let routineId = req.query.routineId;
+
+  if (routineId == undefined) {
+    res.statusMessage = "No existe el routineId";
+    return res.status(406).send();
+  }
+
+  routineController
+    .getById(routineId)
+    .then(routine => {
+      let resExercise = req.body;
+
+      let updatedExercise = {
+        name: resExercise.name || routine.name,
+        userId: resExercise.userId || routine.userId
+      };
+
+      routineController
+        .update(routine._id, updatedExercise)
+        .then(resRou => {
+          res.statusMessage = "Updated Routine";
+          return res.status(200).json(resRou);
+        })
+        .catch(err => {
+          console.log(err);
+          res.statusMessage = "Problemas con el servidor";
+          return res.status(500).send();
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "No se encontro una rutina con este id";
+      res.status(406).send();
+    });
+});
+
+app.post("/gymzoAPI/createUser", jsonParser, (req, res) => {
+  let {
+    name,
+    email,
+    password,
+    dateOfBirth,
+    sex,
+    height,
+    defaultRoutine,
+    weightId
+  } = req.body;
+
+  if (
+    name == undefined ||
+    email == undefined ||
+    password == undefined ||
+    dateOfBirth == undefined ||
+    sex == undefined ||
+    height == undefined ||
+    defaultRoutine == undefined ||
+    weightId == undefined
+  ) {
+    res.statusMessage = "No tiene las propiedades suficientes";
+    return res.status(406).send();
+  }
+
+  let newUser = {
+    id: uuid.v4(),
+    name: name,
+    email: email,
+    password: password,
+    dateOfBirth: dateOfBirth,
+    sex: sex,
+    height: height,
+    defaultRoutine: defaultRoutine,
+    weightId: weightId
+  };
+
+  userController
+    .create(newUser)
+    .then(user => {
+      res.statusMessage = "Usuario Añadido";
+      return res.status(201).json(user);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Error al añadir nuevo Usuario";
+      return res.status(500).send(newUser);
+    });
+});
+
+app.post("/gymzoAPI/createExercise", jsonParser, (req, res) => {
+  let { name, sets, reps, weight, weekday, routineId } = req.body;
+
+  if (
+    name == undefined ||
+    sets == undefined ||
+    reps == undefined ||
+    weight == undefined ||
+    sex == undefined ||
+    weekday == undefined ||
+    routineId == undefined
+  ) {
+    res.statusMessage = "No tiene las propiedades suficientes";
+    return res.status(406).send();
+  }
+
+  let newExercise = {
+    sets: sets,
+    reps: reps,
+    weight: weight,
+    weekday: weekday,
+    routineId: routineId
+  };
+
+  exerciseController
+    .create(newExercise)
+    .then(exercise => {
+      res.statusMessage = "Ejercicio Añadido";
+      return res.status(201).json(exercise);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Error al añadir nuevo Ejercicio";
+      return res.status(500).send(newExercise);
+    });
+});
+
+app.post("/gymzoAPI/createRoutine", jsonParser, (req, res) => {
+  let { name, userId } = req.body;
+
+  if (name == undefined || userId == undefined) {
+    res.statusMessage = "No tiene las propiedades suficientes";
+    return res.status(406).send();
+  }
+
+  let newRoutine = {
+    name: name,
+    userId: userId
+  };
+
+  routineController
+    .create(newRoutine)
+    .then(routine => {
+      res.statusMessage = "Rutina Añadida";
+      return res.status(201).json(routine);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Error al añadir nueva Rutina";
+      return res.status(500).send(newRoutine);
+    });
+});
+
+app.post("/gymzoAPI/createInstanceExercise", jsonParser, (req, res) => {
+  let { startDate, finishDate, exerciseId } = req.body;
+
+  if (
+    startDate == undefined ||
+    finishDate == undefined ||
+    exerciseId == undefined
+  ) {
+    res.statusMessage = "No tiene las propiedades suficientes";
+    return res.status(406).send();
+  }
+
+  let newInstanceExercise = {
+    startDate: startDate,
+    finishDate: finishDate,
+    exerciseId: exerciseId
+  };
+
+  instanceExerciseController
+    .create(newInstanceExercise)
+    .then(iExercise => {
+      res.statusMessage = "Instancia de Ejercicio Añadida";
+      return res.status(201).json(iExercise);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Error al añadir nueva Instancia de Ejercicio";
+      return res.status(500).send(newInstanceExercise);
+    });
+});
+
+app.post("/gymzoAPI/createWeight", jsonParser, (req, res) => {
+  let { userId, weight, measureDate } = req.body;
+
+  if (userId == undefined || weight == undefined || measureDate == undefined) {
+    res.statusMessage = "No tiene las propiedades suficientes";
+    return res.status(406).send();
+  }
+
+  let newWeight = {
+    userId: userId,
+    weight: weight,
+    measureDate: measureDate
+  };
+
+  instanceExerciseController
+    .create(newWeight)
+    .then(weight => {
+      res.statusMessage = "Peso Añadida";
+      return res.status(201).json(weight);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Error al añadir nuevo Peso";
+      return res.status(500).send(newWeight);
+    });
+});
+
 app.get("/gymzoAPI/profile", jsonParser, (req, res) => {
-  let userId = req.body.userId;
+  let userId = req.query.userId;
 
   if (userId == undefined || userId === "") {
     res.statusMessage = "Añadir un valor de userID en el query string";
@@ -87,7 +473,7 @@ app.get("/gymzoAPI/getMyRoutine", jsonParser, (req, res) => {
 });
 
 app.get("/gymzoAPI/getAllRoutines", jsonParser, (req, res) => {
-  let userId = req.body.userId;
+  let userId = req.query.userId;
 
   if (userId == undefined || userId === "") {
     res.statusMessage = "Añadir un valor de userID en el query string";
@@ -108,7 +494,7 @@ app.get("/gymzoAPI/getAllRoutines", jsonParser, (req, res) => {
 });
 
 app.get("/gymzoAPI/getAllWeights", jsonParser, (req, res) => {
-  let userId = req.body.userId;
+  let userId = req.query.userId;
 
   if (userId == undefined || userId === "") {
     res.statusMessage = "Añadir un valor de userID en el query string";
@@ -149,7 +535,7 @@ app.get("/gymzoAPI/getAllExercises", jsonParser, (req, res) => {
 });
 
 app.get("/gymzoAPI/getAllInstanceExercises", jsonParser, (req, res) => {
-  let exerciseId = req.body.exerciseId;
+  let exerciseId = req.query.exerciseId;
 
   if (exerciseId == undefined || exerciseId === "") {
     res.statusMessage = "Añadir un valor de routineId en el query string";
@@ -170,7 +556,7 @@ app.get("/gymzoAPI/getAllInstanceExercises", jsonParser, (req, res) => {
 });
 
 app.delete("/gymzoAPI/deleteWeight", (req, res) => {
-  let weightId = req.body.weightId;
+  let weightId = req.query.weightId;
 
   if (weightId == undefined || weightId === "") {
     res.statusMessage = "Añadir un valor de weightId en el query string";
@@ -191,7 +577,7 @@ app.delete("/gymzoAPI/deleteWeight", (req, res) => {
 });
 
 app.delete("/gymzoAPI/deleteRoutine", (req, res) => {
-  let routineId = req.body.routineId;
+  let routineId = req.query.routineId;
 
   if (routineId == undefined || routineId === "") {
     res.statusMessage = "Añadir un valor de routineId en el query string";
@@ -212,9 +598,9 @@ app.delete("/gymzoAPI/deleteRoutine", (req, res) => {
 });
 
 app.delete("/gymzoAPI/deleteExercise", (req, res) => {
-  let exerciseId = req.body.exerciseId;
+  let exerciseId = req.query.exerciseId;
 
-  if (exerciseId == undefined || exerciseId === "") {
+  if (exerciseId == undefined) {
     res.statusMessage = "Añadir un valor de routineId en el query string";
     return res.status(406).send();
   }
@@ -233,9 +619,9 @@ app.delete("/gymzoAPI/deleteExercise", (req, res) => {
 });
 
 app.delete("/gymzoAPI/deleteInstanceExercise", (req, res) => {
-  let instanceExerciseId = req.body.instanceExerciseId;
+  let instanceExerciseId = req.query.instanceExerciseId;
 
-  if (instanceExerciseId == undefined || instanceExerciseId === "") {
+  if (instanceExerciseId == undefined) {
     res.statusMessage =
       "Añadir un valor de instanceExerciseId en el query string";
     return res.status(406).send();
@@ -255,9 +641,9 @@ app.delete("/gymzoAPI/deleteInstanceExercise", (req, res) => {
 });
 
 app.delete("/gymzoAPI/deleteUser", (req, res) => {
-  let userId = req.body.userId;
+  let userId = req.query.userId;
 
-  if (userId == undefined || userId === "") {
+  if (userId == undefined) {
     res.statusMessage = "Añadir un valor de userId en el query string";
     return res.status(406).send();
   }
@@ -293,22 +679,38 @@ let settings = {
 }; */
 
 app.post("/gymzoAPI/login", jsonParser, (req, res) => {
-  let user = req.body.user;
-  let password = req.body.password;
-  //validar usuario en la base de datos
-  let data = {
-    user,
-    password
-  };
-  let token = jwt.sign(data, JWTTOKEN, {
-    expiresIn: 60 * 5
-  });
-  console.log(token);
-  return res.status(200).json({ token });
+  let { email, password } = req.body;
+
+  if (email == undefined || password == undefined) {
+    res.statusMessage = "No hay email o password";
+    return res.status(406).send();
+  }
+  userController
+    .getByEmail(email)
+    .then(user => {
+      if (user == undefined) {
+        let data = {
+          email,
+          password
+        };
+
+        let token = jwt.sign(data, JWTTOKEN, {
+          expiresIn: 60 * 5
+        });
+        console.log(token);
+        return res.status(200).json({ token });
+      }
+      res.statusMessage = "Ya existe un usuario con este mail";
+      return res.status(400).send();
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Error en el servidor";
+      return res.status(500).send();
+    });
 });
 
 app.get("/gymzoAPI/validate", (req, res) => {
-  console.log(req.headers);
   let token = req.headers.authorization;
   token = token.replace("Bearer ", "");
 
@@ -318,7 +720,7 @@ app.get("/gymzoAPI/validate", (req, res) => {
       return res.status(400).send();
     }
     console.log(user);
-    return res.status(200).json({ message: "Éxito" });
+    return res.status(200).json({ message: "Success" });
   });
 });
 

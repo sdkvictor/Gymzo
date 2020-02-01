@@ -4,7 +4,6 @@ let { routineSchema } = require("./routine");
 mongoose.Promise = global.Promise;
 
 let userCollection = mongoose.Schema({
-  id: { type: String },
   name: { type: String },
   email: { type: String },
   password: { type: String },
@@ -28,7 +27,16 @@ let userController = {
       });
   },
   getByUserId: function(id) {
-    User.findOne({ id: id })
+    User.findOne({ _id: id })
+      .then(user => {
+        return user;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  },
+  getByEmail: function(email) {
+    User.findOne({ email: email })
       .then(user => {
         return user;
       })
@@ -38,6 +46,24 @@ let userController = {
   },
   delete: function(id) {
     return User.findOneAndRemove({ _id: id })
+      .then(user => {
+        return user;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
+  },
+  create: function(newUser) {
+    return User.create(newUser)
+      .then(user => {
+        return user;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
+  },
+  update: function(id, newUser) {
+    return User.findOneAndUpdate({ _id: id }, newUser)
       .then(user => {
         return user;
       })

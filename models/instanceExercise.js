@@ -16,8 +16,8 @@ let InstanceExercise = mongoose.Model(
 let instanceExerciseController = {
   getAll: function() {
     InstanceExercise.find()
-      .then(instanceExercises => {
-        return instanceExercises;
+      .then(iExercises => {
+        return iExercises;
       })
       .catch(err => {
         throw new Error(err);
@@ -25,8 +25,17 @@ let instanceExerciseController = {
   },
   getByExerciseId: function(id) {
     InstanceExercise.find({ exerciseId: id })
-      .then(exercise => {
-        return exercise;
+      .then(iExercise => {
+        return iExercise;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  },
+  getById: function(id) {
+    InstanceExercise.find({ _id: id })
+      .then(iExercise => {
+        return iExercise;
       })
       .catch(err => {
         throw new Error(err);
@@ -36,6 +45,24 @@ let instanceExerciseController = {
     return InstanceExercise.findOneAndRemove({ _id: id })
       .then(instanceExercise => {
         return instanceExercise;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
+  },
+  create: function(newInstanceExercise) {
+    return InstanceExercise.create(newInstanceExercise)
+      .then(iExercise => {
+        return iExercise;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
+  },
+  update: function(id, newInstanceExercise) {
+    return InstanceExercise.findOneAndUpdate({ _id: id }, newInstanceExercise)
+      .then(iExercise => {
+        return iExercise;
       })
       .catch(error => {
         throw new Error(error);
