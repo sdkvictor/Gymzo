@@ -67,16 +67,6 @@ let routineController = {
         throw new Error(error);
       });
   }
-  /*
-  getByDate: function(userId, day, month, year) {
-    Routine.findMany({userId: userId, })
-      .then(routines => {
-        return routines;
-      })
-      .catch(err => {
-        throw new Error(err);
-      }); }
-  */
 };
 module.exports = {
   routineSchema,

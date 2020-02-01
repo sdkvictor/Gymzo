@@ -60,7 +60,7 @@ let exerciseController = {
       });
   },
   update: function(id, newExercise) {
-    return InstanceExercise.findOneAndUpdate(
+    return Exercise.findOneAndUpdate(
       { _id: mongoose.Types.ObjectId(id) },
       newExercise
     )

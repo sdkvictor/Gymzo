@@ -36,7 +36,7 @@ let instanceExerciseController = {
       });
   },
   getById: function(id) {
-    return InstanceExercise.find({ _id: mongoose.Types.ObjectId(id) })
+    return InstanceExercise.findOne({ _id: mongoose.Types.ObjectId(id) })
       .then(iExercise => {
         return iExercise;
       })
