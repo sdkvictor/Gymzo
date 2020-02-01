@@ -11,14 +11,14 @@ let userCollection = mongoose.Schema({
   sex: { type: String },
   height: { type: Number },
   defaultRoutine: { type: routineSchema },
-  weightId: { type: String }
+  weightId: [String]
 });
 
 let User = mongoose.model("users", userCollection);
 
 let userController = {
   getAll: function() {
-    User.find()
+    return User.find()
       .then(people => {
         return people;
       })
@@ -27,7 +27,7 @@ let userController = {
       });
   },
   getByUserId: function(id) {
-    User.findOne({ _id: id })
+    return User.findOne({ _id: mongoose.Types.ObjectId(id) })
       .then(user => {
         return user;
       })
@@ -36,7 +36,7 @@ let userController = {
       });
   },
   getByEmail: function(email) {
-    User.findOne({ email: email })
+    return User.findOne({ email: email })
       .then(user => {
         return user;
       })
@@ -45,7 +45,7 @@ let userController = {
       });
   },
   delete: function(id) {
-    return User.findOneAndRemove({ _id: id })
+    return User.findOneAndRemove({ _id: mongoose.Types.ObjectId(id) })
       .then(user => {
         return user;
       })
@@ -63,7 +63,7 @@ let userController = {
       });
   },
   update: function(id, newUser) {
-    return User.findOneAndUpdate({ _id: id }, newUser)
+    return User.findOneAndUpdate({ _id: mongoose.Types.ObjectId(id) }, newUser)
       .then(user => {
         return user;
       })

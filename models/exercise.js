@@ -11,11 +11,11 @@ let exerciseSchema = mongoose.Schema({
   routineId: { type: String }
 });
 
-let Exercise = mongoose.Model("exercises", exerciseSchema);
+let Exercise = mongoose.model("exercises", exerciseSchema);
 
 let exerciseController = {
   getAll: function() {
-    Exercise.find()
+    return Exercise.find()
       .then(ex => {
         return ex;
       })
@@ -24,7 +24,7 @@ let exerciseController = {
       });
   },
   getByRoutineId: function(id) {
-    Exercise.find({ routineId: id })
+    return Exercise.find({ routineId: id })
       .then(exercise => {
         return exercise;
       })
@@ -33,7 +33,7 @@ let exerciseController = {
       });
   },
   getById: function(id) {
-    Exercise.findOne({ _id: id })
+    return Exercise.findOne({ _id: mongoose.Types.ObjectId(id) })
       .then(exercise => {
         return exercise;
       })
@@ -42,7 +42,7 @@ let exerciseController = {
       });
   },
   delete: function(id) {
-    return Exercise.findOneAndRemove({ _id: id })
+    return Exercise.findOneAndRemove({ _id: mongoose.Types.ObjectId(id) })
       .then(exercise => {
         return exercise;
       })
@@ -60,7 +60,10 @@ let exerciseController = {
       });
   },
   update: function(id, newExercise) {
-    return InstanceExercise.findOneAndUpdate({ _id: id }, newExercise)
+    return InstanceExercise.findOneAndUpdate(
+      { _id: mongoose.Types.ObjectId(id) },
+      newExercise
+    )
       .then(exercise => {
         return exercise;
       })
