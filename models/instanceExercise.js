@@ -1,5 +1,6 @@
 let mongoose = require("mongoose");
-let { exerciseSchema } = require("./exercise");
+
+mongoose.Promise = global.Promise;
 
 let instanceExerciseSchema = mongoose.Schema({
   startDate: { type: Date },
@@ -20,6 +21,24 @@ let instanceExerciseController = {
       })
       .catch(err => {
         throw new Error(err);
+      });
+  },
+  getByExerciseId: function(id) {
+    InstanceExercise.find({ exerciseId: id })
+      .then(exercise => {
+        return exercise;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  },
+  delete: function(id) {
+    return InstanceExercise.findOneAndRemove({ _id: id })
+      .then(instanceExercise => {
+        return instanceExercise;
+      })
+      .catch(error => {
+        throw new Error(error);
       });
   }
 };

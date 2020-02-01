@@ -26,6 +26,24 @@ let userController = {
       .catch(err => {
         throw new Error(err);
       });
+  },
+  getByUserId: function(id) {
+    User.findOne({ id: id })
+      .then(user => {
+        return user;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  },
+  delete: function(id) {
+    return User.findOneAndRemove({ _id: id })
+      .then(user => {
+        return user;
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
   }
 };
 
