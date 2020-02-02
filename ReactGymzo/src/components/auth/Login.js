@@ -14,7 +14,12 @@ export default class Login extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    
+    checkLogin(){
+        console.log("checkLogin");
+        if(this.props.loggedIn){
+            this.props.history.push("/dashboard");
+        }
+    }
     
     handleSubmit(event){
         const{
@@ -25,39 +30,8 @@ export default class Login extends Component {
         event.preventDefault();
         console.log(email, password);
 
-        let url = "http://localhost:8080/gymzoAPI/login";
-        let settings = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer token'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        }
-        fetch(url, settings)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error(response.statusText);
-            })
-            .then(responseJSON => {
-                this.props.handleSuccessfulAuth(responseJSON);
-                console.log("res from login",responseJSON);
-            })
-            .catch(error => {
-                console.log(error);
-            })
-            event.preventDefault();
-    }
-    
-    checkLogin(){
-        if(this.props.loggedIn){
-            this.props.history.push("/dashboard");
-        }
+        this.props.handleLogin(email,password);
+        this.checkLogin();
     }
     
     handleChange(event){
