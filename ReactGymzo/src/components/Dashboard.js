@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
-const Dashboard = () => {
+const Dashboard = props => {
     return (
-        <di>
+        <div>
             <div>
                 <h1>Dashboard</h1>
-                <h1>Dashboard</h1>
+                <h1>Status:{props.loggedIn}</h1>
             </div>
-        </di>
+        </div>
     );
 }
 export default Dashboard;

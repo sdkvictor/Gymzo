@@ -9,25 +9,70 @@ export default class Registration extends Component {
             email: "",
             password: "",
             password_confirmation : "",
+            name: "",
+            dateOfBirth: "",
+            sex: "",
+            height: "",
             registrationErrors: ""
-        }
+        };
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-
+    
     handleSubmit(event){
         const{
             email,
             password,
-            password_confirmation
+            password_confirmation,
+            name,
+            dateOfBirth,
+            sex,
+            height
         } = this.state;
-        
-        axios.post("http://localhost:8080/registrations", {
+
+        event.preventDefault();
+        console.log(email, password);
+
+        let url = "http://localhost:8080/gymzoAPI/createUser";
+        let settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer  token'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                name: name,
+                dateOfBirth : dateOfBirth,
+                sex : sex,
+                height: height
+            })
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.props.handleSuccessfulAuth(responseJSON);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            event.preventDefault();
+        /*
+        axios.post("http://localhost:8080/gymzoAPI/createUser", {
             user:{
                 email: email,
                 password: password,
-                password_confirmation: password_confirmation
+                name: name,
+                dateOfBirth : dateOfBirth,
+                sex : sex,
+                height: height
             }
         },
         {withCredentials: true} 
@@ -36,10 +81,10 @@ export default class Registration extends Component {
         }).catch(error=>{
             console.log("registration error", error);
         });
-        
-        event.preventDefault();
+        */
     }
-
+    
+    
     handleChange(event){
         this.setState({
             [event.target.name]: event.target.value
@@ -71,6 +116,38 @@ export default class Registration extends Component {
                 name="password_confirmation" 
                 placeholder="Password confirmation" 
                 value={this.state.password_confirmation} 
+                onChange = {this.handleChange} 
+                required
+            />
+            <input 
+                type="text" 
+                name="name" 
+                placeholder="name" 
+                value={this.state.name} 
+                onChange = {this.handleChange} 
+                required
+            />
+            <input 
+                type="text" 
+                name="dateOfBirth" 
+                placeholder="dateOfBirth" 
+                value={this.state.dateOfBirth} 
+                onChange = {this.handleChange} 
+                required
+            />
+            <input 
+                type="text" 
+                name="sex" 
+                placeholder="sex" 
+                value={this.state.sex} 
+                onChange = {this.handleChange} 
+                required
+            />
+            <input 
+                type="text" 
+                name="height" 
+                placeholder="height" 
+                value={this.state.height} 
                 onChange = {this.handleChange} 
                 required
             />
