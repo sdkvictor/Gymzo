@@ -59,6 +59,8 @@ DELETE
 
 let app = express();
 
+/*
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -71,6 +73,17 @@ app.use(function(req, res, next) {
     return res.send(204);
   }
   next();
+});
+*/
+
+app.use(function(req, res, next) {
+ res.header("Access-Control-Allow-Origin", "*");
+ res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+ res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+ if (req.method === "OPTIONS") {
+ return res.send(204);
+ }
+ next();
 });
 
 app.use(express.static("public"));
@@ -789,7 +802,7 @@ let settings = {
 }; */
 
 app.post("/gymzoAPI/login", jsonParser, (req, res) => {
-  let { email, password } = req.body;
+  let { email, password, _id } = req.body;
 
   if (email == undefined || password == undefined) {
     res.statusMessage = "No hay email o password";
@@ -798,19 +811,24 @@ app.post("/gymzoAPI/login", jsonParser, (req, res) => {
   userController
     .getByEmail(email)
     .then(user => {
-      if (user == undefined) {
+      if (user != undefined) {
         let data = {
-          email,
-          password
+          emai: user.email,
+          password: user.password,
+          id: user._id
         };
+        if(password!=user.password){
+          res.statusMessage = "Invalid password";
+          return res.status(400).send();
+        }
 
         let token = jwt.sign(data, JWTTOKEN, {
           expiresIn: 60 * 5
         });
         console.log(token);
-        return res.status(200).json({ token });
+        return res.status(200).json({ token, id:user._id});
       }
-      res.statusMessage = "Ya existe un usuario con este mail";
+      res.statusMessage = "No se encontró el usuario";
       return res.status(400).send();
     })
     .catch(err => {
@@ -820,8 +838,9 @@ app.post("/gymzoAPI/login", jsonParser, (req, res) => {
     });
 });
 
-app.get("/gymzoAPI/validate", (req, res) => {
-  let token = req.headers.authorization;
+app.get("/gymzoAPI/validate/:token", (req, res) => {
+  //let token = req.headers.authorization;
+  let token = req.params.token;
   token = token.replace("Bearer ", "");
 
   jwt.verify(token, JWTTOKEN, (err, user) => {
@@ -830,7 +849,7 @@ app.get("/gymzoAPI/validate", (req, res) => {
       return res.status(400).send();
     }
     console.log(user);
-    return res.status(200).json({ message: "Success" });
+    return res.status(200).json({ message: "Success", id:user.id});
   });
 });
 
