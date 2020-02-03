@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import {BrowserRouter, Switch, Route} from "react-router-dom";
 import Home from "./Home";
+import Login from "./auth/Login";
+import Registration from "./auth/Registration";
 import Dashboard from './Dashboard';
+import Routines from './Routines'
+import CreateRoutine from './createRoutine'
+
 
 export default class App extends Component {
   constructor(){
     super();
     this.state={
       loggedIn:false,
-      user:{}
+      user:{},
+      currentRoutine:{}
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
   }
@@ -82,12 +88,32 @@ export default class App extends Component {
         <Switch>
         <Route exact path={"/"} 
         render ={props=>(
-          <Home {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <Home {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/login"} 
+        render ={props=>(
+          <Login {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/register"} 
+        render ={props=>(
+          <Registration {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/routines"} 
+        render ={props=>(
+          <Routines {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn} routineId={this.state.routineId}/>
         )}
         />
         <Route exact path={"/dashboard"}
         render ={props=>(
-          <Dashboard {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <Dashboard {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/createRoutine"}
+        render ={props=>(
+          <CreateRoutine {...props} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
         </Switch>

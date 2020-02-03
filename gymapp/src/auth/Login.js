@@ -13,8 +13,6 @@ export default class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-
-    
     
     handleSubmit(event){
         const{
@@ -46,6 +44,7 @@ export default class Login extends Component {
             })
             .then(responseJSON => {
                 this.props.handleSuccessfulAuth(responseJSON);
+                this.props.history.push("/dashboard");
                 console.log("res from login",responseJSON);
             })
             .catch(error => {
@@ -56,9 +55,16 @@ export default class Login extends Component {
     
     checkLogin(){
         if(this.props.loggedIn){
-            this.props.history.push("/dashboard");
+            console.log("checkLogin", this.props.loggedIn);
+            this.props.history.push("/");
         }
     }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.loggedIn !== prevProps.loggedIn) {
+          this.checkLogin()
+        }
+      }
     
     handleChange(event){
         this.setState({

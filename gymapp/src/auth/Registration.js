@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 export default class Registration extends Component {
     constructor(props){
@@ -30,58 +29,46 @@ export default class Registration extends Component {
             sex,
             height
         } = this.state;
-
         event.preventDefault();
-        console.log(email, password);
 
-        let url = "http://localhost:8080/gymzoAPI/createUser";
-        let settings = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer  token'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-                name: name,
-                dateOfBirth : dateOfBirth,
-                sex : sex,
-                height: height
-            })
+        if(password!=password_confirmation){
+            console.log("passwords don't match");
         }
-        fetch(url, settings)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error(response.statusText);
-            })
-            .then(responseJSON => {
-                this.props.handleSuccessfulAuth(responseJSON);
-            })
-            .catch(error => {
-                console.log(error);
-            })
-            event.preventDefault();
-        /*
-        axios.post("http://localhost:8080/gymzoAPI/createUser", {
-            user:{
-                email: email,
-                password: password,
-                name: name,
-                dateOfBirth : dateOfBirth,
-                sex : sex,
-                height: height
+        else{
+
+            console.log(email, password);
+    
+            let url = "http://localhost:8080/gymzoAPI/createUser";
+            let settings = {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer  token'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    name: name,
+                    dateOfBirth : dateOfBirth,
+                    sex : sex,
+                    height: height
+                })
             }
-        },
-        {withCredentials: true} 
-        ).then(response =>{
-            console.log("registration res" , response);
-        }).catch(error=>{
-            console.log("registration error", error);
-        });
-        */
+            fetch(url, settings)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error(response.statusText);
+                })
+                .then(responseJSON => {
+                    this.props.handleLogin(responseJSON.email,responseJSON.password);
+                    this.props.history.push("/");
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        }
     }
     
     
@@ -90,6 +77,19 @@ export default class Registration extends Component {
             [event.target.name]: event.target.value
         })
     }
+
+    checkLogin(){
+        if(this.props.loggedIn){
+            console.log("checkLogin", this.props.loggedIn);
+            this.props.history.push("/");
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.loggedIn !== prevProps.loggedIn) {
+          this.checkLogin()
+        }
+      }
     
     render() {
         return(
