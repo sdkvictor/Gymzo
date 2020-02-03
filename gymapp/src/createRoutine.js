@@ -4,12 +4,14 @@ import Login from "./auth/Login";
 import "./css/home.css";
 
 export default class CreateRoutine extends Component {
-  constructor(props) {
-    super(props);
-  }
-  componentDidMount() {
-    this.checkLoginStatus();
-  }
+    constructor(props){
+        super(props);
+
+    }
+    componentDidMount(){
+        this.checkLoginStatus();
+    }
+
 
   checkLoginStatus = () => {
     if (!this.props.loggedIn) {
@@ -22,6 +24,9 @@ export default class CreateRoutine extends Component {
     const { routineName } = this.state;
     event.preventDefault();
 
+       
+
+    
     if (routineName != "" && routineName != undefined) {
       console.log("routine name", routineName);
 
@@ -53,14 +58,14 @@ export default class CreateRoutine extends Component {
     }
   };
 
-  handleNewRoutne(response) {
-    this.props.currentRoutine.setState = {
-      id: response._id,
-      name: response.name
-    };
-    console.log(this.props.currentRoutine);
-    console.log(response);
-  }
+handleNewRoutne(response){
+        this.props.updateCurrentRoutine(response._id,response.name);
+        let newExercises = [];
+        this.props.updateExercises(newExercises);
+        console.log(this.props.currentRoutine);
+        console.log(response);
+    }
+
 
   handleChange = event => {
     this.setState({
