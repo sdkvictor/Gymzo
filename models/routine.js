@@ -29,7 +29,7 @@ let routineController = {
       });
   },
   getById: function(id) {
-    return Routine.find({ _id: id })
+    return Routine.findOne({ _id: id })
       .then(routine => {
         return routine;
       })
