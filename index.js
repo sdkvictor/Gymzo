@@ -328,13 +328,13 @@ app.post("/gymzoAPI/createUser", jsonParser, (req, res) => {
 });
 //Checked
 app.post("/gymzoAPI/createExercise", jsonParser, (req, res) => {
-  let { name, sets, reps, weight, weekday, routineId } = req.body;
+  let { name, sets, reps, weekday, routineId } = req.body;
 
   if (
     name == undefined ||
     sets == undefined ||
     reps == undefined ||
-    weight == undefined ||
+    //weight == undefined ||
     weekday == undefined ||
     routineId == undefined
   ) {
@@ -345,7 +345,7 @@ app.post("/gymzoAPI/createExercise", jsonParser, (req, res) => {
   let newExercise = {
     sets: sets,
     reps: reps,
-    weight: weight,
+    //weight: weight,
     weekday: weekday,
     routineId: routineId
   };

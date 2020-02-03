@@ -7,6 +7,7 @@ import './css/home.css'
 export default class CreateRoutine extends Component {
     constructor(props){
         super(props);
+
     }
     componentDidMount(){
         this.checkLoginStatus();
@@ -58,10 +59,9 @@ export default class CreateRoutine extends Component {
     }
 
     handleNewRoutne(response){
-        this.props.currentRoutine.setState = {
-            id: response._id,
-            name: response.name
-        }
+        this.props.updateCurrentRoutine(response._id,response.name);
+        let newExercises = [];
+        this.props.updateExercises(newExercises);
         console.log(this.props.currentRoutine);
         console.log(response);
     }

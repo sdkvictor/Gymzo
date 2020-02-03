@@ -6,6 +6,8 @@ import Registration from "./auth/Registration";
 import Dashboard from './Dashboard';
 import Routines from './Routines'
 import CreateRoutine from './createRoutine'
+import NewRoutine from './NewRoutine';
+import NewExercise from './NewExercise';
 
 
 export default class App extends Component {
@@ -14,9 +16,26 @@ export default class App extends Component {
     this.state={
       loggedIn:false,
       user:{},
-      currentRoutine:{}
+      currentRoutine:{},
+      exercises:[],
+      allRoutines:[]
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
+  }
+
+  updateExercises=(newExercises)=>{
+    this.state.exercises.setState = newExercises;
+  }
+
+  updateExercises=(newExercises)=>{
+    this.state.exercises.setState = newExercises;
+  }
+  
+  updateCurrentRoutine=(newId,newName)=>{
+    this.state.currentRoutine.setState={
+      id: newId,
+      name: newName
+    }
   }
 
   checkLoginStatus(){
@@ -113,7 +132,17 @@ export default class App extends Component {
         />
         <Route exact path={"/createRoutine"}
         render ={props=>(
-          <CreateRoutine {...props} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <CreateRoutine {...props} updateExercises={this.updateExercises} exercises={this.state.exercises} updateCurrentRoutine={this.updateCurrentRoutine} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/newRoutine"}
+        render ={props=>(
+          <NewRoutine {...props} updateExercises={this.updateExercises} exercises={this.state.exercises} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/newExercise"}
+        render ={props=>(
+          <NewExercise {...props} updateExercises={this.updateExercises} exercises={this.state.exercises} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
         </Switch>
