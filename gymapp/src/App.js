@@ -4,13 +4,17 @@ import Home from "./Home";
 import Login from "./auth/Login";
 import Registration from "./auth/Registration";
 import Dashboard from './Dashboard';
+import Routines from './Routines'
+import CreateRoutine from './createRoutine'
+
 
 export default class App extends Component {
   constructor(){
     super();
     this.state={
       loggedIn:false,
-      user:{}
+      user:{},
+      currentRoutine:{}
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
   }
@@ -59,6 +63,7 @@ export default class App extends Component {
 
   }
 
+
   handleSuccessfulAuth = (response) =>{
     this.setState({
       loggedIn: true,
@@ -71,85 +76,46 @@ export default class App extends Component {
     console.log(this.state);
   }
 
-  handleLogin(email, password){
-    let url = "http://localhost:8080/gymzoAPI/login";
-    let settings = {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer token'
-        },
-        body: JSON.stringify({
-            email: email,
-            password: password
-        })
-    }
-    fetch(url, settings)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error(response.statusText);
-        })
-        .then(responseJSON => {
-            console.log("res from login",responseJSON);
-            this.handleSuccessfulAuth(responseJSON);
-        })
-        .catch(error => {
-            console.log(error);
-        })
-        event.preventDefault();
-}
-
-  componentWillMount(){
+  componentDidMount(){
     this.checkLoginStatus();
     console.log("checking if loggedin");
   }
-  
 
   render() {
     return (
       <div className='app'>
         <BrowserRouter>
         <Switch>
+        <Route exact path={"/"} 
+        render ={props=>(
+          <Home {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
         <Route exact path={"/login"} 
         render ={props=>(
-          <Login {...props} checkLoginStatus={this.checkLoginStatus} handleLogin={this.handleLogin} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <Login {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
         <Route exact path={"/register"} 
         render ={props=>(
-          <Registration {...props} handleLogin={this.handleLogin} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <Registration {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+        )}
+        />
+        <Route exact path={"/routines"} 
+        render ={props=>(
+          <Routines {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn} routineId={this.state.routineId}/>
         )}
         />
         <Route exact path={"/dashboard"}
         render ={props=>(
-          <Dashboard {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <Dashboard {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
-
-        <Route exact path={"/routines"}
+        <Route exact path={"/createRoutine"}
         render ={props=>(
-          <Routines {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <CreateRoutine {...props} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
-
-        <Route exact path={"/newroutine"}
-        render ={props=>(
-          <NewRoutine {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
-        )}
-        /> 
-        <Route exact path={"/profile"}
-        render ={props=>(
-          <Profile {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
-        )}
-        />
-        <Route exact path={"/editroutine"}
-        render ={props=>(
-          <EditRoutine {...props} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
-        )}
-        />
-
         </Switch>
         </BrowserRouter>
       </div>

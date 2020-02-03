@@ -63,6 +63,7 @@ export default class Registration extends Component {
                 })
                 .then(responseJSON => {
                     this.props.handleLogin(responseJSON.email,responseJSON.password);
+                    this.props.history.push("/");
                 })
                 .catch(error => {
                     console.log(error);
@@ -76,6 +77,19 @@ export default class Registration extends Component {
             [event.target.name]: event.target.value
         })
     }
+
+    checkLogin(){
+        if(this.props.loggedIn){
+            console.log("checkLogin", this.props.loggedIn);
+            this.props.history.push("/");
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.loggedIn !== prevProps.loggedIn) {
+          this.checkLogin()
+        }
+      }
     
     render() {
         return(

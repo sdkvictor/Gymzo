@@ -13,13 +13,6 @@ export default class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-
-    checkLogin(){
-        console.log("checkLogin");
-        if(this.props.loggedIn){
-            this.props.history.push("/dashboard");
-        }
-    }
     
     handleSubmit(event){
         const{
@@ -30,9 +23,48 @@ export default class Login extends Component {
         event.preventDefault();
         console.log(email, password);
 
-        this.props.handleLogin(email,password);
-        this.checkLogin();
+        let url = "http://localhost:8080/gymzoAPI/login";
+        let settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer token'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.props.handleSuccessfulAuth(responseJSON);
+                this.props.history.push("/dashboard");
+                console.log("res from login",responseJSON);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            event.preventDefault();
     }
+    
+    checkLogin(){
+        if(this.props.loggedIn){
+            console.log("checkLogin", this.props.loggedIn);
+            this.props.history.push("/");
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.loggedIn !== prevProps.loggedIn) {
+          this.checkLogin()
+        }
+      }
     
     handleChange(event){
         this.setState({
