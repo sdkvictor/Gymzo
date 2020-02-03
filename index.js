@@ -539,29 +539,26 @@ app.get("/gymzoAPI/profile", jsonParser, (req, res) => {
       return res.status(500).send();
     });
 });
-//No esta programada
+//Checked
 app.get("/gymzoAPI/getMyRoutine", jsonParser, (req, res) => {
-  let userId = req.body.userId;
-  let { day, month, year } = req.body;
-
-  if (userId == undefined) {
-    res.statusMessage = "Añadir un valor de userID en el query string";
+  let routineId = req.query.routineId;
+  console.log({ routineId });
+  if (routineId == undefined) {
+    res.statusMessage = "Añadir un valor de routineId en el query string";
     return res.status(406).send();
   }
 
-  if (day == undefined || month == undefined || year == undefined) {
-    res.statusMessage = "Faltan propiedades";
-    return res.status(400).send();
-  }
   routineController
-    .getByUserId(userId)
-    .then(routines => {
-      if (Object.keys(routines).length === 0) {
+    .getById(routineId)
+    .then(routine => {
+      console.log({ routine });
+
+      if (Object.keys(routine).length === 0) {
         res.statusMessage = "No se encontraron las rutinas";
         return res.status(400).send();
       }
       res.statusMessage = "Se encontraron las rutinas";
-      return res.status(200).json(routines);
+      return res.status(200).json(routine);
     })
     .catch(err => {
       console.log(err);

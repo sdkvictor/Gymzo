@@ -29,7 +29,7 @@ let routineController = {
       });
   },
   getById: function(id) {
-    return Routine.findOne({ _id: id })
+    return Routine.findOne({ _id: mongoose.Types.ObjectId(id) })
       .then(routine => {
         return routine;
       })
