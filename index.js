@@ -36,9 +36,8 @@ GET
 * getAllExercises/:routineID
 * getAllInstanceExercises/:exerciseId
 * validate
+* getInstanceExercises/:instanceExerciseId -> de aqui sacas finish date y start date
 + getMyRoutine/:userid/?day&month&year
-+ getExerciseWeight/:instanceExerciseId
-+ getExerciseDate/:instanceExerciseId
 
 PUT
 
@@ -78,18 +77,32 @@ app.use(function(req, res, next) {
 */
 
 app.use(function(req, res, next) {
- res.header("Access-Control-Allow-Origin", "*");
- res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
- res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
- if (req.method === "OPTIONS") {
- return res.send(204);
- }
- next();
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+  if (req.method === "OPTIONS") {
+    return res.send(204);
+  }
+  next();
 });
 
 app.use(express.static("public"));
 app.use(morgan("dev"));
+/*
+PUT EXAMPLE OF USER
 
+http://localhost:8080/gymzoAPI/updateUser/?userId=5e35b93e4f2fb69c19dfd424
+
+{
+"sex": "Female",
+"defaultRoutine": {
+	"name": "Arnlod's Routine",
+	"userId": "5e35b93e4f2fb69c19dfd424"
+},
+"weightId": ["5e35bc5617f5c59cc7b9dbb9","5e359f3e1c9d440000f67d17"]
+}
+*/
+//Checked
 app.put("/gymzoAPI/updateUser", jsonParser, (req, res) => {
   let userId = req.query.userId;
 
@@ -102,6 +115,11 @@ app.put("/gymzoAPI/updateUser", jsonParser, (req, res) => {
     .getByUserId(userId)
     .then(user => {
       let resUser = req.body;
+
+      if (user == undefined) {
+        res.statusMessage = "No hay un usuario con ese ID";
+        return res.status(400).send();
+      }
 
       let updatedUser = {
         name: resUser.name || user.name,
@@ -132,7 +150,14 @@ app.put("/gymzoAPI/updateUser", jsonParser, (req, res) => {
       res.status(406).send();
     });
 });
-
+/*
+PUT EXAMPLE OF WEIGHT
+http://localhost:8080/gymzoAPI/updateWeight/?weightId=5e35bc5617f5c59cc7b9dbb9
+{
+"weight": 75,
+"measureDate": "2020-02-01"
+}
+*/
 app.put("/gymzoAPI/updateWeight", jsonParser, (req, res) => {
   let weightId = req.query.weightId;
 
@@ -145,7 +170,10 @@ app.put("/gymzoAPI/updateWeight", jsonParser, (req, res) => {
     .getById(weightId)
     .then(weight => {
       let resWeight = req.body;
-
+      if (weight == undefined) {
+        res.statusMessage = "No hay un peso con ese ID";
+        return res.status(400).send();
+      }
       let updatedWeight = {
         userId: resWeight.userId || weight.userId,
         weight: resWeight.weight || weight.weight,
@@ -170,7 +198,15 @@ app.put("/gymzoAPI/updateWeight", jsonParser, (req, res) => {
       res.status(406).send();
     });
 });
-
+/*
+PUT EXAMPLE OF EXERCISE
+http://localhost:8080/gymzoAPI/updateExercise/?exerciseId=5e35a1a91c9d440000f67d23
+{
+"weekday": ["Monday","Saturday"],
+"sets": 6,
+"reps": 8
+}
+*/
 app.put("/gymzoAPI/updateExercise", jsonParser, (req, res) => {
   let exerciseId = req.query.exerciseId;
 
@@ -183,7 +219,10 @@ app.put("/gymzoAPI/updateExercise", jsonParser, (req, res) => {
     .getById(exerciseId)
     .then(exercise => {
       let resExercise = req.body;
-
+      if (exercise == undefined) {
+        res.statusMessage = "No hay un ejercicio con ese ID";
+        return res.status(400).send();
+      }
       let updatedExercise = {
         name: resExercise.name || exercise.name,
         sets: resExercise.sets || exercise.sets,
@@ -212,7 +251,13 @@ app.put("/gymzoAPI/updateExercise", jsonParser, (req, res) => {
       res.status(406).send();
     });
 });
-
+/*
+PUT EXAMPLE OF INSTANCE EXERCISE
+http://localhost:8080/gymzoAPI/updateInstanceExercise/?instanceExerciseId=5e35a2911c9d440000f67d26
+{
+"finishDate": "1800-01-20"
+}
+*/
 app.put("/gymzoAPI/updateInstanceExercise", jsonParser, (req, res) => {
   let instanceExerciseId = req.query.instanceExerciseId;
 
@@ -226,6 +271,10 @@ app.put("/gymzoAPI/updateInstanceExercise", jsonParser, (req, res) => {
     .then(iExercise => {
       let resExercise = req.body;
 
+      if (iExercise == undefined) {
+        res.statusMessage = "No hay una instancia de ejercicio con ese ID";
+        return res.status(400).send();
+      }
       let updatedInstanceExercise = {
         startDate: resExercise.startDate || iExercise.startDate,
         finishDate: resExercise.finishDate || iExercise.finishDate,
@@ -235,6 +284,7 @@ app.put("/gymzoAPI/updateInstanceExercise", jsonParser, (req, res) => {
       instanceExerciseController
         .update(iExercise._id, updatedInstanceExercise)
         .then(resIEx => {
+          console.log({ resIEx });
           res.statusMessage = "Updated Instance Exercise";
           return res.status(200).json(resIEx);
         })
@@ -251,7 +301,15 @@ app.put("/gymzoAPI/updateInstanceExercise", jsonParser, (req, res) => {
       res.status(406).send();
     });
 });
+/*
+PUT EXAMPLE OF ROUTINE
 
+http://localhost:8080/gymzoAPI/updateRoutine?routineId=5e35bb76b5683b9c7ebe2d49
+{
+	"name": "Abs"
+}
+*/
+//Falta verificar porque no se crean las rutinas
 app.put("/gymzoAPI/updateRoutine", jsonParser, (req, res) => {
   let routineId = req.query.routineId;
 
@@ -264,6 +322,13 @@ app.put("/gymzoAPI/updateRoutine", jsonParser, (req, res) => {
     .getById(routineId)
     .then(routine => {
       let resExercise = req.body;
+      console.log({ routine });
+      console.log({ resExercise });
+
+      if (routine == undefined) {
+        res.statusMessage = "No hay una rutina con ese ID";
+        return res.status(400).send();
+      }
 
       let updatedExercise = {
         name: resExercise.name || routine.name,
@@ -288,6 +353,7 @@ app.put("/gymzoAPI/updateRoutine", jsonParser, (req, res) => {
       res.status(406).send();
     });
 });
+
 //Checked
 app.post("/gymzoAPI/createUser", jsonParser, (req, res) => {
   let { name, email, password, dateOfBirth, sex, height } = req.body;
@@ -473,10 +539,32 @@ app.get("/gymzoAPI/profile", jsonParser, (req, res) => {
       return res.status(500).send();
     });
 });
-
+//Checked
 app.get("/gymzoAPI/getMyRoutine", jsonParser, (req, res) => {
-  let userId = req.body.userId;
-  let { day, month, year } = req.body;
+  let routineId = req.query.routineId;
+  console.log({ routineId });
+  if (routineId == undefined) {
+    res.statusMessage = "Añadir un valor de routineId en el query string";
+    return res.status(406).send();
+  }
+
+  routineController
+    .getById(routineId)
+    .then(routine => {
+      console.log({ routine });
+
+      if (Object.keys(routine).length === 0) {
+        res.statusMessage = "No se encontraron las rutinas";
+        return res.status(400).send();
+      }
+      res.statusMessage = "Se encontraron las rutinas";
+      return res.status(200).json(routine);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Database error";
+      return res.status(500).send();
+    });
 });
 
 //Checked
@@ -557,7 +645,7 @@ app.get("/gymzoAPI/getAllExercises", jsonParser, (req, res) => {
       return res.status(500).send();
     });
 });
-
+//localhost:8080/gymzoAPI/getAllInstanceExercises/?exerciseId=5e35a1a91c9d440000f67d23
 app.get("/gymzoAPI/getAllInstanceExercises", jsonParser, (req, res) => {
   let exerciseId = req.query.exerciseId;
 
@@ -584,8 +672,36 @@ app.get("/gymzoAPI/getAllInstanceExercises", jsonParser, (req, res) => {
       return res.status(500).send();
     });
 });
-//localhost:8080/gymzoAPI/getAllInstanceExercises/?exerciseId=5e35a1a91c9d440000f67d23
-http: app.delete("/gymzoAPI/deleteWeight", (req, res) => {
+
+app.get("/gymzoAPI/getInstanceExercises", jsonParser, (req, res) => {
+  let instanceExerciseId = req.query.instanceExerciseId;
+
+  if (instanceExerciseId == undefined) {
+    res.statusMessage =
+      "Añadir un valor de instanceExerciseId en el query string";
+    return res.status(406).send();
+  }
+
+  instanceExerciseController
+    .getById(instanceExerciseId)
+    .then(records => {
+      if (Object.keys(records).length === 0) {
+        res.statusMessage =
+          "No se encontraron las instancias de los ejercicios";
+        return res.status(400).send();
+      }
+
+      res.statusMessage = "Se encontraron las instancias de los ejercicios";
+      return res.status(200).json(records);
+    })
+    .catch(err => {
+      console.log(err);
+      res.statusMessage = "Database error";
+      return res.status(500).send();
+    });
+});
+//Checked
+app.delete("/gymzoAPI/deleteWeight", (req, res) => {
   let weightId = req.query.weightId;
 
   if (weightId == undefined || weightId === "") {
@@ -605,7 +721,7 @@ http: app.delete("/gymzoAPI/deleteWeight", (req, res) => {
       return res.status(404).send();
     });
 });
-
+//Checked
 app.delete("/gymzoAPI/deleteRoutine", (req, res) => {
   let routineId = req.query.routineId;
 
@@ -626,7 +742,7 @@ app.delete("/gymzoAPI/deleteRoutine", (req, res) => {
       return res.status(404).send();
     });
 });
-
+//Checked
 app.delete("/gymzoAPI/deleteExercise", (req, res) => {
   let exerciseId = req.query.exerciseId;
 
@@ -647,7 +763,7 @@ app.delete("/gymzoAPI/deleteExercise", (req, res) => {
       return res.status(404).send();
     });
 });
-
+//Checked
 app.delete("/gymzoAPI/deleteInstanceExercise", (req, res) => {
   let instanceExerciseId = req.query.instanceExerciseId;
 
@@ -669,7 +785,7 @@ app.delete("/gymzoAPI/deleteInstanceExercise", (req, res) => {
       return res.status(404).send();
     });
 });
-
+//Checked
 app.delete("/gymzoAPI/deleteUser", (req, res) => {
   let userId = req.query.userId;
 
@@ -724,7 +840,7 @@ app.post("/gymzoAPI/login", jsonParser, (req, res) => {
           password: user.password,
           id: user._id
         };
-        if(password!=user.password){
+        if (password != user.password) {
           res.statusMessage = "Invalid password";
           return res.status(400).send();
         }
@@ -733,7 +849,7 @@ app.post("/gymzoAPI/login", jsonParser, (req, res) => {
           expiresIn: 60 * 5
         });
         console.log(token);
-        return res.status(200).json({ token, id:user._id});
+        return res.status(200).json({ token, id: user._id });
       }
       res.statusMessage = "No se encontró el usuario";
       return res.status(400).send();
@@ -756,14 +872,14 @@ app.get("/gymzoAPI/validate/:token", (req, res) => {
       return res.status(400).send();
     }
     console.log(user);
-    return res.status(200).json({ message: "Success", id:user.id});
+    return res.status(200).json({ message: "Success", id: user.id });
   });
 });
 
 let server;
 function runServer(port, databaseUrl) {
   return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, response => {
+    mongoose.connect(databaseUrl, { useFindAndModify: false }, response => {
       if (response) {
         return reject(response);
       } else {

@@ -29,7 +29,7 @@ let routineController = {
       });
   },
   getById: function(id) {
-    return Routine.find({ _id: id })
+    return Routine.findOne({ _id: mongoose.Types.ObjectId(id) })
       .then(routine => {
         return routine;
       })
@@ -67,16 +67,6 @@ let routineController = {
         throw new Error(error);
       });
   }
-  /*
-  getByDate: function(userId, day, month, year) {
-    Routine.findMany({userId: userId, })
-      .then(routines => {
-        return routines;
-      })
-      .catch(err => {
-        throw new Error(err);
-      }); }
-  */
 };
 module.exports = {
   routineSchema,
