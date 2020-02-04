@@ -278,7 +278,8 @@ app.put("/gymzoAPI/updateInstanceExercise", jsonParser, (req, res) => {
       let updatedInstanceExercise = {
         startDate: resExercise.startDate || iExercise.startDate,
         finishDate: resExercise.finishDate || iExercise.finishDate,
-        exerciseId: resExercise.exerciseId || iExercise.exerciseId
+        exerciseId: resExercise.exerciseId || iExercise.exerciseId,
+        weight: resExercise.weight || iExercise.weight
       };
 
       instanceExerciseController
@@ -457,12 +458,13 @@ app.post("/gymzoAPI/createRoutine", jsonParser, (req, res) => {
 });
 //Checked
 app.post("/gymzoAPI/createInstanceExercise", jsonParser, (req, res) => {
-  let { startDate, finishDate, exerciseId } = req.body;
+  let { startDate, finishDate, exerciseId, weight } = req.body;
 
   if (
     startDate == undefined ||
     finishDate == undefined ||
-    exerciseId == undefined
+    exerciseId == undefined ||
+    weight == undefined
   ) {
     res.statusMessage = "No tiene las propiedades suficientes";
     return res.status(406).send();
@@ -471,7 +473,8 @@ app.post("/gymzoAPI/createInstanceExercise", jsonParser, (req, res) => {
   let newInstanceExercise = {
     startDate: startDate,
     finishDate: finishDate,
-    exerciseId: exerciseId
+    exerciseId: exerciseId,
+    weight: weight
   };
 
   instanceExerciseController

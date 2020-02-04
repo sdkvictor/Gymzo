@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import Registration from './auth/Registration';
-import Login from './auth/Login';
-import './css/home.css'
-
+import React, { Component } from "react";
+import Registration from "./auth/Registration";
+import Login from "./auth/Login";
+import "./css/home.css";
 
 
 export default class NewExercise extends Component {
+
     constructor(props){
         super(props);
         this.state = {
@@ -16,93 +16,99 @@ export default class NewExercise extends Component {
         };
     }
 
-    componentDidMount(){
-        this.checkLoginStatus();
-    }
 
-    checkLoginStatus = ()=>{
-        if(!this.props.loggedIn){
-            this.props.history.push("/login");
+  componentDidMount() {
+    this.checkLoginStatus();
+  }
+
+  checkLoginStatus = () => {
+    if (!this.props.loggedIn) {
+      this.props.history.push("/login");
+    }
+  };
+
+  addExercise = event => {
+    console.log("adding a new exercise");
+    const { name, sets, reps, weekday } = this.state;
+
+    event.preventDefault();
+    console.log(sets, reps, weekday);
+
+    let url = "http://localhost:8080/gymzoAPI/createExercise";
+
+    let settings = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: name,
+        routineId: this.props.routineId,
+        sets: sets,
+        reps: reps,
+        weekday: weekday
+      })
+    };
+
+    fetch(url, settings)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
         }
-    }
+        throw new Error(response.statusText);
+      })
+      .then(responseJSON => {
+        this.handleNewExercise(responseJSON);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
-    addExercise = (event) =>{
-        console.log("adding a new exercise");
-        const{
-            name,
-            sets,
-            reps,
-            weekday
-        } = this.state;
+  handleNewExercise(response) {
+    console.log(response);
+    this.updateExercises();
+    this.props.history.push("/routine");
+  }
 
-        event.preventDefault();
-        console.log(sets, reps, weekday);
+  updateExercises = () => {
+    console.log("updating exercises array");
 
-        let url = "http://localhost:8080/gymzoAPI/createExercise";
-        let settings = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: name,
-                routineId: this.props.routineId,
-                sets: sets,
-                reps: reps,
-                weekday: weekday
-            })
+    let url = `http://localhost:8080/gymzoAPI/getAllExercises/?routineId=${this.props.routineId}`;
+    let settings = {
+      method: "GET"
+    };
+    fetch(url, settings)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
         }
-        fetch(url, settings)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error(response.statusText);
-            })
-            .then(responseJSON => {
-                this.handleNewExercise(responseJSON);
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }
+        throw new Error(response.statusText);
+      })
+      .then(responseJSON => {
+        this.props.updateExercises(responseJSON);
+        console.log(responseJSON);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
-    handleNewExercise(response){
-        console.log(response);
-        this.updateExercises();
-        this.props.history.push("/routine");
-    }
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
 
-    updateExercises = () =>{
-        console.log("updating exercises array");
-
-        let url = `http://localhost:8080/gymzoAPI/getAllExercises/?routineId=${this.props.routineId}`;
-        let settings = {
-            method: "GET"
-        }
-        fetch(url, settings)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error(response.statusText);
-            })
-            .then(responseJSON => {
-                this.props.updateExercises(responseJSON);
-                console.log(responseJSON);
-
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }
-
-    handleChange=(event)=>{
-        this.setState({
-            [event.target.name]: event.target.value
-        })
-    }
-
+  toRoutines = () => {
+    this.props.history.push("/routines");
+  };
+  toDashboard = () => {
+    this.props.history.push("/dashboard");
+  };
+  toProfile = () => {
+    this.props.history.push("/profile");
+  };
     handleChangeWeekday=(event)=>{
         var options = event.target.options;
         var value = [];
@@ -115,25 +121,21 @@ export default class NewExercise extends Component {
         console.log(this.state.weekday);
     }
 
-    toRoutines=()=>{
-        this.props.history.push("/routines");
-    }
-    toDashboard=()=>{
-        this.props.history.push("/dashboard");
-    }
-    toProfile=()=>{
-        this.props.history.push("/profile");
-    }
-
-    render() {
-        return (
-        <div className="body">
-            <div>
-            <ul className="navbar">
-                <button type="button" name="routines" onClick={this.toRoutines}><li className= "navbarElem">Routines</li></button>
-                <button type="button" name="dashboard" onClick={this.toDashboard}><li className= "navbarElem">Dashboard</li></button>
-                <button type="button" name="profile" onClick={this.toProfile}><li className= "navbarElem">Profile</li></button>
-            </ul>
+  render() {
+    return (
+      <div className="body">
+        <div>
+          <ul className="navbar">
+            <button type="button" name="routines" onClick={this.toRoutines}>
+              <li className="navbarElem">Routines</li>
+            </button>
+            <button type="button" name="dashboard" onClick={this.toDashboard}>
+              <li className="navbarElem">Dashboard</li>
+            </button>
+            <button type="button" name="profile" onClick={this.toProfile}>
+              <li className="navbarElem">Profile</li>
+            </button>
+          </ul>
         </div>
         <div id="myRoutine">
             <h1>{this.props.currentRoutine.name}</h1>
@@ -157,7 +159,7 @@ export default class NewExercise extends Component {
                 <p> <button id="addExercise" onClick={this.addExercise}>Save</button> </p>
             </div>
         </div>
-        </div>
-        );
-    }
+      </div>
+    );
+  }
 }

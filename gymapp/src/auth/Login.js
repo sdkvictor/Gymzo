@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import GymzoImage from ".././assets/gymzo.png";
+import { SERVER } from "./../config";
 
 export default class Login extends Component {
   constructor(props) {
@@ -17,7 +19,7 @@ export default class Login extends Component {
   handleSubmit(event) {
     const { email, password } = this.state;
 
-    let url = "http://localhost:8080/gymzoAPI/login";
+    let url = `${SERVER}/gymzoAPI/login`;
     let settings = {
       method: "POST",
       headers: {
@@ -66,11 +68,14 @@ export default class Login extends Component {
     });
   }
 
+  redirectEdit = event => {
+    this.props.history.push("/register");
+  };
   render() {
     return (
-      <div className="auth-wrapper">
+      <div className="auth-wrapper login">
         <form onSubmit={this.handleSubmit} className="auth-inner">
-          <h3> Login</h3>
+          <img src={GymzoImage} className="image" />
           <input
             type="email"
             name="email"
@@ -88,6 +93,9 @@ export default class Login extends Component {
             required
           />
           <button type="submit">Login</button>
+          <button type="submit" onClick={this.redirectRegister}>
+            Register
+          </button>
         </form>
       </div>
     );
