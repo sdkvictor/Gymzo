@@ -12,6 +12,7 @@ import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 import AddWeight from "./AddWeight";
 import { SERVER } from "./config";
+import { useAlert } from 'react-alert'
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
