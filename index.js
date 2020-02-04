@@ -847,7 +847,7 @@ app.post("/gymzoAPI/login", jsonParser, (req, res) => {
         }
 
         let token = jwt.sign(data, JWTTOKEN, {
-          expiresIn: 60 * 5
+          expiresIn: 60 * 120
         });
         console.log(token);
         return res.status(200).json({ token, id: user._id });

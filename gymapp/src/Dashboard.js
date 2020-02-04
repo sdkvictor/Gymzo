@@ -1,6 +1,17 @@
 import React, { Component } from "react";
 import { Line } from "react-chartjs-2";
-import { Card } from "react-bootstrap";
+import {
+  Card,
+  Nav,
+  Navbar,
+  CardDeck,
+  Row,
+  Column,
+  CardGroup
+} from "react-bootstrap";
+import { SERVER } from "./config";
+import "./Dashboard.css";
+
 export default class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -36,6 +47,7 @@ export default class Dashboard extends Component {
 
   componentDidMount() {
     this.checkLoginStatus();
+    this.renderHeight();
     this.renderWeightEvolution();
   }
 
@@ -45,7 +57,7 @@ export default class Dashboard extends Component {
     }
   };
   renderWeightEvolution = () => {
-    let url = `http://localhost:8080/gymzoAPI/getAllWeights/?userId=${this.props.user.id}`;
+    let url = `${SERVER}/gymzoAPI/getAllWeights/?userId=${this.props.user.id}`;
 
     let settings = {
       method: "GET"
@@ -64,6 +76,38 @@ export default class Dashboard extends Component {
         console.log(error);
       });
   };
+
+  renderHeight = () => {
+    let url = `${SERVER}/gymzoAPI/profile/?userId=${this.props.user.id}`;
+
+    let settings = {
+      method: "GET"
+    };
+    fetch(url, settings)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+      })
+      .then(responseJSON => {
+        this.handleProfile(responseJSON);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  handleProfile(response) {
+    let stateUpdate = this.state;
+    stateUpdate = {
+      ...stateUpdate,
+      currentHeight: response.height,
+      name: response.name
+    };
+    this.setState(stateUpdate);
+  }
+
   handleWeights(response) {
     this.state.data.labels = [];
     this.state.data.datasets[0].data = [];
@@ -81,8 +125,22 @@ export default class Dashboard extends Component {
         response[i].weight
       ];
     }
+    stateUpdate = {
+      ...stateUpdate,
+      currentWeight: response[Object.keys(response).length - 1].weight,
+      data2: { ...stateUpdate.data }
+    };
     this.setState(stateUpdate);
-    console.log(this.state.data);
+
+    stateUpdate.data2.datasets[0].data = [];
+
+    for (let i = 0; i < Object.keys(response).length; ++i) {
+      stateUpdate.data2.datasets[0].data = [
+        ...stateUpdate.data2.datasets[0].data,
+        response[i].weight / (this.state.currentHeight ^ 2)
+      ];
+    }
+    this.setState(stateUpdate);
   }
 
   toRoutines=()=>{
@@ -95,32 +153,77 @@ toProfile=()=>{
     this.props.history.push("/profile");
 }
   render() {
+    console.log(this.state);
+    var n = this.state.currentWeight / (this.state.currentHeight ^ 2);
+    var today = new Date();
+    var date = today.getMonth() + 1 + "/" + today.getDate();
+    var time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     return (
       <div>
-        <div>
-          <ul className="navbar">
-                <button type="button" name="routines" onClick={this.toRoutines}><li className= "navbarElem">Routines</li></button>
-                <button type="button" name="dashboard" onClick={this.toDashboard}><li className= "navbarElem">Dashboard</li></button>
-                <button type="button" name="profile" onClick={this.toProfile}><li className= "navbarElem">Profile</li></button>
-          </ul>
-        </div>
-        <div>
-          <h1>Dashboard</h1>
-          <h1>
-            Status:
-            {/*{props.loggedIn}*/}
-          </h1>
-        </div>
-        <div>
-          <h1></h1>
-        </div>
-        <Card>
+        <Navbar className="nav">
+          <Nav>
+            <Nav.Item>
+              <Nav.Link href="routines">Routines</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="statistics">Statistics</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="profile">Profile</Nav.Link>
+            </Nav.Item>
+          </Nav>
+        </Navbar>
+        <Card className="header">
+          <Card.Header>My Statistics</Card.Header>
           <Card.Body>
-            <Card.Title>My Weight Evolution</Card.Title>
-            <Line ref="chart" data={this.state.data} />
+            <Card.Title>Welcome Back {this.state.name}!</Card.Title>
+            <Row>
+              <CardDeck>
+                <Card>
+                  <Card.Header>Current Weight</Card.Header>
+                  <Card.Body>
+                    <Card.Text>{this.state.currentWeight} Kilograms </Card.Text>
+                  </Card.Body>
+                </Card>
+                <Card>
+                  <Card.Header>Current Height</Card.Header>
+                  <Card.Body>
+                    <Card.Text>{this.state.currentHeight} Meters</Card.Text>
+                  </Card.Body>
+                </Card>
+                <Card>
+                  <Card.Header>Body Mass Index</Card.Header>
+                  <Card.Body>
+                    <Card.Text> {n.toFixed(4)} BMI</Card.Text>
+                  </Card.Body>
+                </Card>
+              </CardDeck>
+            </Row>
+            <Row className="row">
+              <CardGroup>
+                <Card>
+                  <Card.Header>My Weight Evolution</Card.Header>
+                  <Card.Body>
+                    <Line ref="chart" data={this.state.data} />
+                  </Card.Body>
+                  <Card.Footer className="text-muted">
+                    Last Update: {date} @ {time}
+                  </Card.Footer>
+                </Card>
+                <Card>
+                  <Card.Header>My BMI Evolution</Card.Header>
+                  <Card.Body>
+                    <Line ref="chart" data={this.state.data2} />
+                  </Card.Body>
+                  <Card.Footer className="text-muted">
+                    Last Update: {date} @ {time}
+                  </Card.Footer>
+                </Card>
+              </CardGroup>
+            </Row>
           </Card.Body>
         </Card>
-        {console.log(this.state.data)}
       </div>
     );
   }

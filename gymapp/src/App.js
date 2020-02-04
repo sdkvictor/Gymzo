@@ -8,6 +8,9 @@ import Routines from './Routines'
 import CreateRoutine from './createRoutine'
 import NewExercise from './NewExercise';
 import SeeRoutine from "./SeeRoutine";
+
+import { SERVER } from "./config";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default class App extends Component {
@@ -18,27 +21,27 @@ export default class App extends Component {
       user:{},
       currentRoutine:{},
       routineId:""
-
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
   }
 
+
   updateRoutineId=(newId)=>{
     this.setState({routineId:newId}); 
   }
-  updateCurrentRoutine=(newId,newName)=>{
-    this.state.currentRoutine.setState={
+
+  updateCurrentRoutine = (newId, newName) => {
+    this.state.currentRoutine.setState = {
       id: newId,
       name: newName
-    }
+    };
   }
 
-  checkLoginStatus(){
-    console.log("check login",this.state);
-    let token = localStorage.getItem('gm_token');
+  checkLoginStatus() {
+    console.log("check login", this.state);
+    let token = localStorage.getItem("gm_token");
 
-
-    let url = `http://localhost:8080/gymzoAPI/validate/${token}`;
+    let url = `${SERVER}/gymzoAPI/validate/${token}`;
     let settings = {
       method: "GET"
     };
