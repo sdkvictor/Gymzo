@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Container } from "react-bootstrap";
+import GymzoImage from ".././assets/gymzo.png";
+import { SERVER } from "./../config";
 
 export default class Registration extends Component {
   constructor(props) {
@@ -37,7 +38,7 @@ export default class Registration extends Component {
     } else {
       console.log(email, password);
 
-      let url = "http://localhost:8080/gymzoAPI/createUser";
+      let url = `{SERVER}/gymzoAPI/createUser`;
       let settings = {
         method: "POST",
         headers: {
@@ -91,8 +92,9 @@ export default class Registration extends Component {
 
   render() {
     return (
-      <Container>
-        <form onSubmit={this.handleSubmit}>
+      <div className="auth-wrapper login">
+        <form onSubmit={this.handleSubmit} className="auth-inner">
+          <img src={GymzoImage} className="image" />
           <input
             type="email"
             name="email"
@@ -151,7 +153,7 @@ export default class Registration extends Component {
           />
           <button type="submit">Register</button>
         </form>
-      </Container>
+      </div>
     );
   }
 }

@@ -5,12 +5,21 @@
   text-align: left;
   align-self: center;
   justify-self: center;
+  padding: 20px;
 }
 .auth-wrapper h3 {
   text-align: center;
-  margin: 0;
-  line-height: 1;
-  padding-bottom: 20px;
+  margin-bottom: 5%;
+  margin-top: 5%;
+  line-height: 10;
+  font-size: 200%;
+}
+.image {
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
 }
 .auth-inner {
   display: flex;
@@ -19,13 +28,26 @@
   text-align: left;
   align-self: center;
   justify-self: center;
-  width: 450px;
+  width: 40%;
+  padding: 30px;
   margin: auto;
   background: #ffffff;
   box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
   padding: 40px 55px 45px 55px;
   border-radius: 15px;
   transition: all 0.3s;
+}
+.auth-inner input {
+  padding: 10px;
+  margin: 20px;
+}
+.auth-inner button {
+  padding: 10px;
+  margin: 20px;
+  background-color: rgba(29, 161, 242, 1);
+  color: white;
+  font-weight: bold;
+  font-size: large;
 }
 .row {
   margin: 20px;
@@ -41,4 +63,9 @@
 
 .header {
   background-color: rgba(29, 161, 242, 0.5);
+}
+
+.editButton {
+  display: flex;
+  align-self: flex-end;
 }

@@ -62,6 +62,7 @@ export default class Dashboard extends Component {
     let settings = {
       method: "GET"
     };
+
     fetch(url, settings)
       .then(response => {
         if (response.ok) {
@@ -116,8 +117,7 @@ export default class Dashboard extends Component {
 
     for (let i = 0; i < Object.keys(response).length; ++i) {
       let date = new Date(response[i].measureDate);
-      let newDate =
-        date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      let newDate = date.getMonth() + 1 + "-" + date.getDate();
       stateUpdate.data.labels = [...stateUpdate.data.labels, newDate];
 
       stateUpdate.data.datasets[0].data = [
@@ -153,7 +153,6 @@ export default class Dashboard extends Component {
     this.props.history.push("/profile");
   };
   render() {
-    console.log(this.state);
     var n = this.state.currentWeight / (this.state.currentHeight ^ 2);
     var today = new Date();
     var date = today.getMonth() + 1 + "/" + today.getDate();

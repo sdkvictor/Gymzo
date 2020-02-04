@@ -1,36 +1,41 @@
 import React, { Component } from "react";
-import { Line } from "react-chartjs-2";
-import {
-  Card,
-  Nav,
-  Navbar,
-  CardDeck,
-  Row,
-  Column,
-  CardGroup
-} from "react-bootstrap";
+import { Card, Form } from "react-bootstrap";
 import { SERVER } from "./config";
 
 export default class Profile extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      name: "",
+      email: "",
+      password: "",
+      dateOfBirth: "",
+      sex: "",
+      height: ""
+    };
   }
+
   componentDidMount() {
     this.checkLoginStatus();
+    //this.renderProfile();
+  }
+
+  componentWillMount() {
     this.renderProfile();
   }
+
   checkLoginStatus = () => {
     if (!this.props.loggedIn) {
       this.props.history.push("/login");
     }
   };
   renderProfile = () => {
-    console.log(this.state.user);
     let url = `${SERVER}/gymzoAPI/profile/?userId=${this.props.user.id}`;
 
     let settings = {
       method: "GET"
     };
+
     fetch(url, settings)
       .then(response => {
         if (response.ok) {
@@ -48,32 +53,38 @@ export default class Profile extends Component {
 
   handleProfile(response) {
     let stateUpdate = this.state;
+    let date = new Date(response.dateOfBirth);
+    let newDate =
+      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 
     stateUpdate = {
       ...stateUpdate,
       name: response.name,
       email: response.email,
-      password: response.password,
-      dateOfBirth: response.dateOfBirth,
+      dateOfBirth: newDate,
       sex: response.sex,
       height: response.height
     };
     this.setState(stateUpdate);
   }
+
   toRoutines = () => {
     this.props.history.push("/routines");
   };
+
   toDashboard = () => {
     this.props.history.push("/dashboard");
   };
+
   toProfile = () => {
     this.props.history.push("/profile");
   };
 
+  redirectEdit = event => {
+    this.props.history.push("/editProfile");
+  };
+
   render() {
-    let date = this.state.dateOfBirth;
-    let newDate =
-      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     return (
       <div className="body">
         <div>
@@ -90,14 +101,23 @@ export default class Profile extends Component {
           </ul>
         </div>
         <Card>
-          <Card.header>My Profile</Card.header>
+          <Card.Header>My Profile</Card.Header>
           <Card.Body>
-            <Card.Text>Name: {this.state.name}</Card.Text>
-            <Card.Text>Email: {this.state.email}</Card.Text>
-            <Card.Text>Password: {this.state.password}</Card.Text>
-            <Card.Text>Date Of Birth: {newDate}</Card.Text>
-            <Card.Text>Sex: {this.state.sex}</Card.Text>
-            <Card.Text>Height: {this.state.Height}</Card.Text>
+            <p> Name: {this.state.name}</p>
+            <p>Email: {this.state.email}</p>
+            <p>Sex: {this.state.sex}</p>
+            <p>Height: {this.state.height}</p>
+            <p>Date of Birth: {this.state.dateOfBirth}</p>
+            <p>
+              {" "}
+              <button
+                id="editProfileBtn"
+                className="btn btn-primary "
+                onClick={this.redirectEdit}
+              >
+                Edit Profile
+              </button>{" "}
+            </p>
           </Card.Body>
         </Card>
       </div>
