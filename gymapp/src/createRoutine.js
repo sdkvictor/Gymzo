@@ -61,8 +61,6 @@ export default class CreateRoutine extends Component {
 handleNewRoutne(response){
         this.props.updateCurrentRoutine(response._id,response.name);
         this.props.updateRoutineId(response._id);
-        let newExercises = [];
-        this.props.updateExercises(newExercises);
         console.log(this.props.currentRoutine);
         console.log(response);
     }
