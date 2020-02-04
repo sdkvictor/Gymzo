@@ -3,16 +3,19 @@ import Registration from "./auth/Registration";
 import Login from "./auth/Login";
 import "./css/home.css";
 
+
 export default class NewExercise extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-      sets: "",
-      reps: "",
-      weekday: ""
-    };
-  }
+
+    constructor(props){
+        super(props);
+        this.state = {
+            name:"",
+            sets:"",
+            reps:"",
+            weekday:[]
+        };
+    }
+
 
   componentDidMount() {
     this.checkLoginStatus();
@@ -43,7 +46,7 @@ export default class NewExercise extends Component {
         routineId: this.props.routineId,
         sets: sets,
         reps: reps,
-        weekday: "Monday"
+        weekday: weekday
       })
     };
 
@@ -71,7 +74,7 @@ export default class NewExercise extends Component {
   updateExercises = () => {
     console.log("updating exercises array");
 
-    let url = `http://localhost:8080/gymzoAPI/getAllExercises/?routineId=${this.props.currentRoutine.setState.id}`;
+    let url = `http://localhost:8080/gymzoAPI/getAllExercises/?routineId=${this.props.routineId}`;
     let settings = {
       method: "GET"
     };
@@ -106,6 +109,17 @@ export default class NewExercise extends Component {
   toProfile = () => {
     this.props.history.push("/profile");
   };
+    handleChangeWeekday=(event)=>{
+        var options = event.target.options;
+        var value = [];
+        for (var i = 0, l = options.length; i < l; i++) {
+            if (options[i].selected) {
+                value.push(options[i].value);
+            }
+        }
+        this.state.weekday = value;
+        console.log(this.state.weekday);
+    }
 
   render() {
     return (
@@ -124,42 +138,26 @@ export default class NewExercise extends Component {
           </ul>
         </div>
         <div id="myRoutine">
-          <h1>{this.props.currentRoutine.name}</h1>
-          <div>
-            <p>
-              Exercise Name:{" "}
-              <input
-                type="text"
-                name="name"
-                onChange={this.handleChange}
-              ></input>
-            </p>
-            <p>
-              Sets:{" "}
-              <input
-                type="text"
-                name="sets"
-                onChange={this.handleChange}
-              ></input>
-            </p>
-            <p>
-              Repetitions per set:{" "}
-              <input
-                type="text"
-                name="reps"
-                onChange={this.handleChange}
-              ></input>
-            </p>
-          </div>
-          <div id="addExerciseSpace">
-            <p></p>
-            <p>
-              {" "}
-              <button id="addExercise" onClick={this.addExercise}>
-                Save
-              </button>{" "}
-            </p>
-          </div>
+            <h1>{this.props.currentRoutine.name}</h1>
+            <div>
+                <p>Exercise Name: <input type="text" name="name" onChange = {this.handleChange}></input></p>
+                <p>Sets: <input type="text" name="sets" onChange = {this.handleChange}></input></p>
+                <p>Repetitions per set: <input type="text" name="reps" onChange = {this.handleChange}></input></p>
+                <label for="weekday">Weekday:</label>
+                <select multiple name="weekday"onChange={this.handleChangeWeekday}>
+                    <option value={"Monday"}>Monday</option>
+                    <option value={"Tuesday"}>Tuesday</option>
+                    <option value={"Wednesday"}>Wednesday</option>
+                    <option value={"Thursday"}>Thursday</option>
+                    <option value={"Friday"}>Friday</option>
+                    <option value={"Saturday"}>Saturday</option>
+                    <option value={"Sunday"}>Sunday</option>
+                </select>
+            </div>
+            <div id="addExerciseSpace">
+                <p></p>
+                <p> <button id="addExercise" onClick={this.addExercise}>Save</button> </p>
+            </div>
         </div>
       </div>
     );
