@@ -6,7 +6,8 @@ let instanceExerciseSchema = mongoose.Schema(
   {
     startDate: { type: Date },
     finishDate: { type: Date },
-    exerciseId: { type: String }
+    exerciseId: { type: String },
+    weight: { type: Number }
   },
   { collection: "instanceExercises" }
 );

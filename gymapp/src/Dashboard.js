@@ -13,7 +13,7 @@ export default class Dashboard extends Component {
         labels: ["1", "2"],
         datasets: [
           {
-            label: "My Weight Evolution",
+            label: "",
             fill: false,
             lineTension: 0.2,
             backgroundColor: "rgba(75,192,192,0.4)",
