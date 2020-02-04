@@ -8,7 +8,8 @@ export default class SeeRoutine extends Component {
     constructor(props){
         super(props); 
         this.state={
-            routineName:""
+            routineName:"",
+            exercises:[]
         };
     }
 
@@ -55,7 +56,7 @@ export default class SeeRoutine extends Component {
                 throw new Error(response.statusText);
             })
             .then(responseJSON => {
-                this.props.updateExercises(responseJSON);
+                this.setState({exercises: responseJSON});
                 console.log(responseJSON);
                 
             })
@@ -100,7 +101,7 @@ export default class SeeRoutine extends Component {
             <div>
             <table>
                 <tbody>
-                    {this.props.exercises.map((ex, i) => {
+                    {this.state.exercises.map((ex, i) => {
                     return (
                         <tr>
                             <td className="exerciseName">{ex.name}</td>
