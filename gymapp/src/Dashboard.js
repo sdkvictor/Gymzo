@@ -142,6 +142,16 @@ export default class Dashboard extends Component {
     }
     this.setState(stateUpdate);
   }
+
+  toRoutines=()=>{
+    this.props.history.push("/routines");
+}
+toDashboard=()=>{
+    this.props.history.push("/dashboard");
+}
+toProfile=()=>{
+    this.props.history.push("/profile");
+}
   render() {
     console.log(this.state);
     var n = this.state.currentWeight / (this.state.currentHeight ^ 2);

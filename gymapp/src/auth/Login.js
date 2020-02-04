@@ -17,38 +17,39 @@ export default class Login extends Component {
   handleSubmit(event) {
     const { email, password } = this.state;
 
+        let url = "http://localhost:8080/gymzoAPI/login";
+        let settings = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer token'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.props.handleSuccessfulAuth(responseJSON);
+                this.props.history.push("/");
+                console.log("res from login",responseJSON);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+            event.preventDefault();
+    }
+    
     event.preventDefault();
     console.log(email, password);
 
-    let url = "http://localhost:8080/gymzoAPI/login";
-    let settings = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer token"
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    };
-    fetch(url, settings)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJSON => {
-        this.props.handleSuccessfulAuth(responseJSON);
-        this.props.history.push("/dashboard");
-        console.log("res from login", responseJSON);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    event.preventDefault();
-  }
 
   checkLogin() {
     if (this.props.loggedIn) {

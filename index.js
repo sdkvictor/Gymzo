@@ -409,6 +409,7 @@ app.post("/gymzoAPI/createExercise", jsonParser, (req, res) => {
   }
 
   let newExercise = {
+    name: name,
     sets: sets,
     reps: reps,
     //weight: weight,

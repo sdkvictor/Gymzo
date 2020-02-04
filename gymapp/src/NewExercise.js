@@ -45,7 +45,7 @@ export default class NewExercise extends Component {
             },
             body: JSON.stringify({
                 name: name,
-                routineId: this.props.currentRoutine.setState.id,
+                routineId: this.props.routineId,
                 sets: sets,
                 reps: reps,
                 weekday: "Monday"
@@ -69,6 +69,7 @@ export default class NewExercise extends Component {
     handleNewExercise(response){
         console.log(response);
         this.updateExercises();
+        this.props.history.push("/routine");
     }
 
     updateExercises = () =>{
@@ -86,9 +87,9 @@ export default class NewExercise extends Component {
                 throw new Error(response.statusText);
             })
             .then(responseJSON => {
-                this.props.exercises = responseJSON;
+                this.props.updateExercises(responseJSON);
                 console.log(responseJSON);
-                console.log(this.props.currentRoutine.exercises);
+
             })
             .catch(error => {
                 console.log(error);
@@ -101,14 +102,24 @@ export default class NewExercise extends Component {
         })
     }
 
+    toRoutines=()=>{
+        this.props.history.push("/routines");
+    }
+    toDashboard=()=>{
+        this.props.history.push("/dashboard");
+    }
+    toProfile=()=>{
+        this.props.history.push("/profile");
+    }
+
     render() {
         return (
         <div className="body">
             <div>
             <ul className="navbar">
-                <li className= "navbarElem"><a href="routines">Routines</a></li>
-                <li className= "navbarElem"><a href="statistics">Statistics</a></li>
-                <li className= "navbarElem"><a href="profile">Profile</a></li>
+                <button type="button" name="routines" onClick={this.toRoutines}><li className= "navbarElem">Routines</li></button>
+                <button type="button" name="dashboard" onClick={this.toDashboard}><li className= "navbarElem">Dashboard</li></button>
+                <button type="button" name="profile" onClick={this.toProfile}><li className= "navbarElem">Profile</li></button>
             </ul>
         </div>
         <div id="myRoutine">
