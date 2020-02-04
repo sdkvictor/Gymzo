@@ -4,6 +4,7 @@ import Login from './auth/Login';
 import './css/home.css'
 
 
+
 export default class NewExercise extends Component {
     constructor(props){
         super(props);
@@ -11,7 +12,7 @@ export default class NewExercise extends Component {
             name:"",
             sets:"",
             reps:"",
-            weekday:""
+            weekday:[]
         };
     }
 
@@ -48,7 +49,7 @@ export default class NewExercise extends Component {
                 routineId: this.props.routineId,
                 sets: sets,
                 reps: reps,
-                weekday: "Monday"
+                weekday: weekday
             })
         }
         fetch(url, settings)
@@ -75,7 +76,7 @@ export default class NewExercise extends Component {
     updateExercises = () =>{
         console.log("updating exercises array");
 
-        let url = `http://localhost:8080/gymzoAPI/getAllExercises/?routineId=${this.props.currentRoutine.setState.id}`;
+        let url = `http://localhost:8080/gymzoAPI/getAllExercises/?routineId=${this.props.routineId}`;
         let settings = {
             method: "GET"
         }
@@ -100,6 +101,18 @@ export default class NewExercise extends Component {
         this.setState({
             [event.target.name]: event.target.value
         })
+    }
+
+    handleChangeWeekday=(event)=>{
+        var options = event.target.options;
+        var value = [];
+        for (var i = 0, l = options.length; i < l; i++) {
+            if (options[i].selected) {
+                value.push(options[i].value);
+            }
+        }
+        this.state.weekday = value;
+        console.log(this.state.weekday);
     }
 
     toRoutines=()=>{
@@ -128,6 +141,16 @@ export default class NewExercise extends Component {
                 <p>Exercise Name: <input type="text" name="name" onChange = {this.handleChange}></input></p>
                 <p>Sets: <input type="text" name="sets" onChange = {this.handleChange}></input></p>
                 <p>Repetitions per set: <input type="text" name="reps" onChange = {this.handleChange}></input></p>
+                <label for="weekday">Weekday:</label>
+                <select multiple name="weekday"onChange={this.handleChangeWeekday}>
+                    <option value={"Monday"}>Monday</option>
+                    <option value={"Tuesday"}>Tuesday</option>
+                    <option value={"Wednesday"}>Wednesday</option>
+                    <option value={"Thursday"}>Thursday</option>
+                    <option value={"Friday"}>Friday</option>
+                    <option value={"Saturday"}>Saturday</option>
+                    <option value={"Sunday"}>Sunday</option>
+                </select>
             </div>
             <div id="addExerciseSpace">
                 <p></p>

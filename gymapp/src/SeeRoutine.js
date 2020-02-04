@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Registration from './auth/Registration';
 import Login from './auth/Login';
 import './css/home.css'
+import {SERVER} from './config'
 
 
 export default class SeeRoutine extends Component {

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Registration from './auth/Registration';
 import Login from './auth/Login';
 import './css/home.css'
+import {SERVER} from './config'
+
 
 
 export default class Routines extends Component {
@@ -64,6 +66,58 @@ export default class Routines extends Component {
 
     setDefault = (event) =>{
         console.log("set default");
+        event.preventDefault();
+        let url = `${SERVER}/gymzoAPI/getMyRoutine/?routineId=${event.target.value}`;
+        let settings = {
+            method: "GET"
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                console.log("get default routine",responseJSON);
+                this.handleDefault(responseJSON);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+
+    }
+
+    handleDefault=(response)=>{
+        let defaultRoutine = {
+            defaultRoutine:{
+                _id: response._id,
+                name: response.name,
+                userId: response.userId
+            }
+        }
+        let url = `${SERVER}/gymzoAPI/updateUser/?userId=${this.props.user.id}`;
+        let settings = {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(defaultRoutine)
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                console.log("update user default routine",responseJSON);
+
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
 
     toRoutines=()=>{
@@ -74,6 +128,9 @@ export default class Routines extends Component {
     }
     toProfile=()=>{
         this.props.history.push("/profile");
+    }
+    toHome=()=>{
+        this.props.history.push("/");
     }
 
     deleteRoutine=(event)=>{
@@ -115,6 +172,7 @@ export default class Routines extends Component {
         <div className="body">
             <div>
             <ul className="navbar">
+                <button type="button" name="home" onClick={this.toHome}><li className= "navbarElem">Home</li></button>
                 <button type="button" name="routines" onClick={this.toRoutines}><li className= "navbarElem">Routines</li></button>
                 <button type="button" name="dashboard" onClick={this.toDashboard}><li className= "navbarElem">Dashboard</li></button>
                 <button type="button" name="profile" onClick={this.toProfile}><li className= "navbarElem">Profile</li></button>

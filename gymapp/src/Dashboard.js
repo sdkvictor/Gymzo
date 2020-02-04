@@ -55,7 +55,8 @@ export default class Dashboard extends Component {
     if (!this.props.loggedIn) {
       this.props.history.push("/login");
     }
-  };
+  }
+  
   renderWeightEvolution = () => {
     let url = `${SERVER}/gymzoAPI/getAllWeights/?userId=${this.props.user.id}`;
 
