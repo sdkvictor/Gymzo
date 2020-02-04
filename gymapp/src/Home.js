@@ -3,6 +3,7 @@ import Registration from './auth/Registration';
 import Login from './auth/Login';
 import './css/home.css'
 import DatePicker from 'react-date-picker';
+import { useAlert } from 'react-alert'
 
 
 
@@ -15,7 +16,9 @@ export default class Home extends Component {
             exercises:[],
             todayExercises:[],
             date: new Date(),
-            todayWeekday:""
+            todayWeekday:"",
+            weights:[],
+            found:false
         }
     }
 
@@ -104,39 +107,122 @@ export default class Home extends Component {
         }
     }
 
+    updateInstWeight(response, w, id){
+        console.log("updating instance", response);
+        let url = `http://localhost:8080/gymzoAPI/updateInstanceExercise/?instanceExerciseId=${id}`;
+
+        let settings = {
+            method: "PUT",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                weight: w
+            })
+        };
+        fetch(url, settings)
+            .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                console.log("updated instance",responseJSON);
+            })
+            .catch(error => {
+            console.log(error);
+            });
+
+    }
+
+    createInstance(index, id){
+        let url = "http://localhost:8080/gymzoAPI/createInstanceExercise";
+
+        let settings = {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+            startDate: this.state.date.setHours(0,0,0,0),
+            finishDate: this.state.date.setHours(0,0,0,0),
+            exerciseId: id,
+            weight: this.state.weights[index]
+            })
+        };
+        console.log("sdate", this.state.date);
+        console.log("exid", id);
+        console.log("index", index);
+        fetch(url, settings)
+            .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                console.log("created instance",responseJSON);
+            const alert = useAlert();
+            alert.show('Saved');
+            })
+            .catch(error => {
+            console.log(error);
+            });
+    }
 
     saveRoutine = (event) => {
         console.log(this.state.date);
         event.preventDefault();
-        const { weight } = this.state;
-      let url = "http://localhost:8080/gymzoAPI/createInstanceExercise";
-      let settings = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          startDate: this.state.date,
-          finishDate: this.state.date,
-          exerciseId:event.value,
-          weight: 22
-        })
-      };
-      fetch(url, settings)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error(response.statusText);
-        })
-        .then(responseJSON => {
-          this.handleNewRoutne(responseJSON);
-          this.props.history.push("/routine");
-        })
-        .catch(error => {
-          console.log(error);
-        });
+        let id = event.target.name;
+        let w = event.target.value;
+        let url = `http://localhost:8080/gymzoAPI/getAllInstanceExercises/?exerciseId=${event.target.name}`;
+        let settings = {
+            method: "GET"
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                else if(response.status==400){
+                    this.createInstance(w, id);
+                    console.log("creating new instance");
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.handleSaveRoutine(responseJSON, id, w);
+                console.log("updating instance weight", responseJSON);
+            })
+            .catch(error => {
+                console.log(error);
+            })
 
+    }
+
+    handleSaveRoutine=(response,id,weight)=>{
+        let currDate = this.state.date;
+        currDate.setHours(0,0,0,0);
+        let date = currDate.toISOString();
+        let found = false;
+        let instId = "";
+        for(var i=0;i<response.length;i++){
+            let dateElem = response[i].startDate;
+            console.log("dateElem" ,dateElem);
+            console.log("currDate",date);
+            if(date===dateElem){
+                found=true;
+                instId = response[i]._id;
+            }
+        }
+        if(found){
+            console.log(this.state.weights[weight]);
+            this.updateInstWeight(response,this.state.weights[weight],instId);
+        }
+        else{
+            this.createInstance(weight, id);
+        }
     }
 
     seeRoutines = (event)=>{
@@ -168,13 +254,17 @@ export default class Home extends Component {
 
     checkTodayEx=()=>{
         console.log("check today ex", this.state.todayExercises);
-        /*let newTodayExercises=[];
-
+        let emptyArray=[];
+        for(var i=0;i<this.state.todayExercises.length;i++){
+            if(emptyArray.length<this.state.todayExercises.length){
+                emptyArray.push(0);
+            }
+        }
         this.setState({
-            todayExercises:newTodayExercises
+            weights:emptyArray
         })
-        */
     }
+
     checkLoginStatus = () => {
         if (!this.props.loggedIn) {
           this.props.history.push("/login");
@@ -184,6 +274,53 @@ export default class Home extends Component {
     onChange = (date) => {
         this.setState({ date });
         this.setState({todayExercises:[]});
+    }
+
+    updateWeight=(event)=>{
+        this.state.weights[event.target.id] = event.target.value;
+        console.log("weights",this.state.weights);
+    }
+
+    getWeight=(id)=>{
+        let url = `http://localhost:8080/gymzoAPI/getAllInstanceExercises/?exerciseId=${id}`;
+        let settings = {
+            method: "GET"
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                return this.setWeight(responseJSON);
+                console.log("gets instances", responseJSON);
+                
+            })
+            .catch(error => {
+                console.log("failed instances",error);
+                return 0;
+            })
+    }
+
+    setWeight=(response)=>{
+        let currDate = this.state.date;
+        currDate.setHours(0,0,0,0);
+        let date = currDate.toISOString();
+        let found = false;
+        let weight = "";
+        for(var i=0;i<response.length;i++){
+            let dateElem = response[i].startDate;
+            console.log("dateElem" ,dateElem);
+            console.log("currDate",date);
+            if(date===dateElem){
+                found=true;
+                weight = response[i].weight;
+                console.log(response[i].weight);
+            }
+        }
+        return weight;  
     }
 
     render() {
@@ -220,6 +357,7 @@ export default class Home extends Component {
                     <th>Sets</th>
                     <th>Repetitions</th>
                     <th>Weight</th>
+                    <th> Save</th>
                 </tr>
 
                     {this.state.exercises.map((ex, i) => {
@@ -239,15 +377,14 @@ export default class Home extends Component {
                             <td className="exerciseName">{ex.name}</td>
                             <td> {ex.sets}</td>
                             <td> {ex.reps} </td>
-                            <td> <input type="text" name="weight" className="weightIn"/></td>
+                            <td> <input type="text" id={i} name={ex._id} onChange={this.updateWeight} className="weightIn" value={this.getWeight(ex._id)}/></td>
+                            <td> <button id="saveWeight" value={i} name={ex._id} onClick={this.saveRoutine}> Save</button> </td>
                         </tr>
-                    )})}
+                    )
+                    })}
 
                 </tbody>
             </table>
-            <div id="routineButtons">
-                <p> <button id="saveWeight" onClick={this.saveRoutine}>Save</button> </p>
-            </div>
         </div>
         </div>
         );

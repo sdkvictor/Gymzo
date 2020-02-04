@@ -11,6 +11,7 @@ import SeeRoutine from "./SeeRoutine";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 import { SERVER } from "./config";
+import { useAlert } from 'react-alert'
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
