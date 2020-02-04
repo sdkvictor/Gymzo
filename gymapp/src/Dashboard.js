@@ -143,15 +143,15 @@ export default class Dashboard extends Component {
     this.setState(stateUpdate);
   }
 
-  toRoutines=()=>{
+  toRoutines = () => {
     this.props.history.push("/routines");
-}
-toDashboard=()=>{
+  };
+  toDashboard = () => {
     this.props.history.push("/dashboard");
-}
-toProfile=()=>{
+  };
+  toProfile = () => {
     this.props.history.push("/profile");
-}
+  };
   render() {
     console.log(this.state);
     var n = this.state.currentWeight / (this.state.currentHeight ^ 2);
@@ -160,20 +160,20 @@ toProfile=()=>{
     var time =
       today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     return (
-      <div>
-        <Navbar className="nav">
-          <Nav>
-            <Nav.Item>
-              <Nav.Link href="routines">Routines</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="statistics">Statistics</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="profile">Profile</Nav.Link>
-            </Nav.Item>
-          </Nav>
-        </Navbar>
+      <div className="body">
+        <div>
+          <ul className="navbar">
+            <button type="button" name="dashboard" onClick={this.toDashboard}>
+              <li className="navbarElem">Dashboard</li>
+            </button>
+            <button type="button" name="routines" onClick={this.toRoutines}>
+              <li className="navbarElem">Routines</li>
+            </button>
+            <button type="button" name="profile" onClick={this.toProfile}>
+              <li className="navbarElem">Profile</li>
+            </button>
+          </ul>
+        </div>
         <Card className="header">
           <Card.Header>My Statistics</Card.Header>
           <Card.Body>

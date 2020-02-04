@@ -209,6 +209,18 @@ export default class App extends Component {
                 />
               )}
             />
+            <Route
+              exact
+              path={"/profile"}
+              render={props => (
+                <Profile
+                  {...props}
+                  user={this.state.user}
+                  handleSuccessfulAuth={this.handleSuccessfulAuth}
+                  loggedIn={this.state.loggedIn}
+                />
+              )}
+            />
           </Switch>
         </BrowserRouter>
       </div>
