@@ -17,14 +17,24 @@ export default class Home extends Component {
         console.log("see routines");
     }
 
+    toRoutines=()=>{
+        this.props.history.push("/routines");
+    }
+    toDashboard=()=>{
+        this.props.history.push("/dashboard");
+    }
+    toProfile=()=>{
+        this.props.history.push("/profile");
+    }
+
     render() {
         return (
         <div className = "body">
             <div>
             <ul className="navbar">
-                <li className= "navbarElem"><a href="routines">Routines</a></li>
-                <li className= "navbarElem"><a href="statistics">Statistics</a></li>
-                <li className= "navbarElem"><a href="profile">Profile</a></li>
+                <button type="button" name="routines" onClick={this.toRoutines}><li className= "navbarElem">Routines</li></button>
+                <button type="button" name="dashboard" onClick={this.toDashboard}><li className= "navbarElem">Dashboard</li></button>
+                <button type="button" name="profile" onClick={this.toProfile}><li className= "navbarElem">Profile</li></button>
             </ul>
         </div>
         <div id="myRoutine">

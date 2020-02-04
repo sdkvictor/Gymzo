@@ -6,8 +6,8 @@ import Registration from "./auth/Registration";
 import Dashboard from './Dashboard';
 import Routines from './Routines'
 import CreateRoutine from './createRoutine'
-import NewRoutine from './NewRoutine';
 import NewExercise from './NewExercise';
+import SeeRoutine from "./SeeRoutine";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default class App extends Component {
@@ -18,19 +18,20 @@ export default class App extends Component {
       user:{},
       currentRoutine:{},
       exercises:[],
-      allRoutines:[]
+      routineId:""
 
     };
     this.handleSuccessfulAuth = this.handleSuccessfulAuth.bind(this);
   }
 
-
-  updateExercises=(newExercises)=>{
-    this.state.exercises.setState = newExercises;
+  updateRoutineId=(newId)=>{
+    this.setState({routineId:newId});
   }
 
   updateExercises=(newExercises)=>{
-    this.state.exercises.setState = newExercises;
+    console.log("new exercises to update" , newExercises);
+    this.setState({exercises: newExercises});
+    console.log("new exercises")
   }
   
   updateCurrentRoutine=(newId,newName)=>{
@@ -58,7 +59,6 @@ export default class App extends Component {
       })
       .then(responseJSON => {
         if (responseJSON.message == "Success") {
-          console.log("user from json", responseJSON.user);
           this.setState({
             loggedIn: true,
             user: {
@@ -122,7 +122,7 @@ export default class App extends Component {
         />
         <Route exact path={"/routines"} 
         render ={props=>(
-          <Routines {...props} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn} routineId={this.state.routineId}/>
+          <Routines {...props} routineId={this.state.routineId} updateRoutineId={this.updateRoutineId} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn} routineId={this.state.routineId}/>
         )}
         />
         <Route exact path={"/dashboard"}
@@ -132,17 +132,17 @@ export default class App extends Component {
         />
         <Route exact path={"/createRoutine"}
         render ={props=>(
-          <CreateRoutine {...props} updateExercises={this.updateExercises} exercises={this.state.exercises} updateCurrentRoutine={this.updateCurrentRoutine} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <CreateRoutine {...props} routineId={this.state.routineId} updateRoutineId={this.updateRoutineId} updateExercises={this.updateExercises} exercises={this.state.exercises} updateCurrentRoutine={this.updateCurrentRoutine} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
-        <Route exact path={"/newRoutine"}
+        <Route exact path={"/routine"}
         render ={props=>(
-          <NewRoutine {...props} updateExercises={this.updateExercises} exercises={this.state.exercises} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <SeeRoutine {...props} routineId={this.state.routineId} updateRoutineId={this.updateRoutineId} updateExercises={this.updateExercises} exercises={this.state.exercises} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
         <Route exact path={"/newExercise"}
         render ={props=>(
-          <NewExercise {...props} updateExercises={this.updateExercises} exercises={this.state.exercises} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
+          <NewExercise {...props} routineId={this.state.routineId} updateExercises={this.updateExercises} exercises={this.state.exercises} currentRoutine={this.state.currentRoutine} user={this.state.user} handleSuccessfulAuth={this.handleSuccessfulAuth} loggedIn={this.state.loggedIn}/>
         )}
         />
         </Switch>

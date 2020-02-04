@@ -50,7 +50,7 @@ export default class CreateRoutine extends Component {
         })
         .then(responseJSON => {
           this.handleNewRoutne(responseJSON);
-          this.props.history.push("/newRoutine");
+          this.props.history.push("/routine");
         })
         .catch(error => {
           console.log(error);
@@ -60,6 +60,7 @@ export default class CreateRoutine extends Component {
 
 handleNewRoutne(response){
         this.props.updateCurrentRoutine(response._id,response.name);
+        this.props.updateRoutineId(response._id);
         let newExercises = [];
         this.props.updateExercises(newExercises);
         console.log(this.props.currentRoutine);
@@ -71,7 +72,17 @@ handleNewRoutne(response){
     this.setState({
       [event.target.name]: event.target.value
     });
-  };
+  }
+
+  toRoutines=()=>{
+    this.props.history.push("/routines");
+}
+toDashboard=()=>{
+    this.props.history.push("/dashboard");
+}
+toProfile=()=>{
+    this.props.history.push("/profile");
+}
 
   render() {
     return (

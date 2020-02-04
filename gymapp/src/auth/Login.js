@@ -44,7 +44,7 @@ export default class Login extends Component {
             })
             .then(responseJSON => {
                 this.props.handleSuccessfulAuth(responseJSON);
-                this.props.history.push("/dashboard");
+                this.props.history.push("/");
                 console.log("res from login",responseJSON);
             })
             .catch(error => {
