@@ -134,6 +134,7 @@ export default class EditProfile extends Component {
               name="height"
               onChange={this.handleChange}
             ></input>
+            <p></p>
             <p>
               {" "}
               <button

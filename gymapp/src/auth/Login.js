@@ -68,6 +68,9 @@ export default class Login extends Component {
     });
   }
 
+  redirectEdit = event => {
+    this.props.history.push("/register");
+  };
   render() {
     return (
       <div className="auth-wrapper login">
@@ -90,6 +93,9 @@ export default class Login extends Component {
             required
           />
           <button type="submit">Login</button>
+          <button type="submit" onClick={this.redirectRegister}>
+            Register
+          </button>
         </form>
       </div>
     );

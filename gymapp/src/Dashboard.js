@@ -1,14 +1,6 @@
 import React, { Component } from "react";
 import { Line } from "react-chartjs-2";
-import {
-  Card,
-  Nav,
-  Navbar,
-  CardDeck,
-  Row,
-  Column,
-  CardGroup
-} from "react-bootstrap";
+import { Card, Container, CardGroup, ListGroup } from "react-bootstrap";
 import { SERVER } from "./config";
 import "./Dashboard.css";
 
@@ -16,6 +8,7 @@ export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      age: "",
       data: {
         labels: ["1", "2"],
         datasets: [
@@ -101,10 +94,25 @@ export default class Dashboard extends Component {
 
   handleProfile(response) {
     let stateUpdate = this.state;
+    let date1 = new Date();
+    let date = new Date(response.dateOfBirth);
+
+    let year = date1.getFullYear() - date.getFullYear();
+    let hightStat =
+      stateUpdate.currentWeight * 9.9 + response.height * 625 - 4.92 * year + 5;
+    let lowStat =
+      stateUpdate.currentWeight * 9.9 +
+      response.height * 625 -
+      4.92 * year -
+      161;
+    console.log(year);
     stateUpdate = {
       ...stateUpdate,
       currentHeight: response.height,
-      name: response.name
+      name: response.name,
+      age: year,
+      hightStat: hightStat,
+      lowStat: lowStat
     };
     this.setState(stateUpdate);
   }
@@ -154,6 +162,8 @@ export default class Dashboard extends Component {
   };
   render() {
     var n = this.state.currentWeight / (this.state.currentHeight ^ 2);
+    var low = this.state.lowStat * 1.5 - 1.55;
+    var high = this.state.hightStat * 1.5 - 1.55;
     var today = new Date();
     var date = today.getMonth() + 1 + "/" + today.getDate();
     var time =
@@ -177,29 +187,31 @@ export default class Dashboard extends Component {
           <Card.Header>My Statistics</Card.Header>
           <Card.Body>
             <Card.Title>Welcome Back {this.state.name}!</Card.Title>
-            <Row>
-              <CardDeck>
-                <Card>
-                  <Card.Header>Current Weight</Card.Header>
-                  <Card.Body>
-                    <Card.Text>{this.state.currentWeight} Kilograms </Card.Text>
-                  </Card.Body>
-                </Card>
-                <Card>
-                  <Card.Header>Current Height</Card.Header>
-                  <Card.Body>
-                    <Card.Text>{this.state.currentHeight} Meters</Card.Text>
-                  </Card.Body>
-                </Card>
-                <Card>
-                  <Card.Header>Body Mass Index</Card.Header>
-                  <Card.Body>
-                    <Card.Text> {n.toFixed(4)} BMI</Card.Text>
-                  </Card.Body>
-                </Card>
-              </CardDeck>
-            </Row>
-            <Row className="row">
+            <ListGroup>
+              <ListGroup.Item>Age: {this.state.age}</ListGroup.Item>
+              <ListGroup.Item>
+                Current Weight: {this.state.currentWeight}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Current Height: {this.state.currentHeight}
+              </ListGroup.Item>
+              <ListGroup.Item>Body Mass Index: {n.toFixed(2)}</ListGroup.Item>
+              <ListGroup.Item>
+                Resting Metabolic Rate (Low): {this.state.lowStat}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Resting Metabolic Rate (High): {this.state.hightStat}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Total Energy Expenditure (Min):{" "}
+                {this.state.lowStat * 1.5 - 1.55} Calories per daay
+              </ListGroup.Item>
+              <ListGroup.Item>
+                Total Energy Expenditure (Max):{" "}
+                {this.state.hightStat * 1.5 - 1.55} Calories per daay
+              </ListGroup.Item>
+            </ListGroup>
+            <Container>
               <CardGroup>
                 <Card>
                   <Card.Header>My Weight Evolution</Card.Header>
@@ -220,7 +232,7 @@ export default class Dashboard extends Component {
                   </Card.Footer>
                 </Card>
               </CardGroup>
-            </Row>
+            </Container>
           </Card.Body>
         </Card>
       </div>
