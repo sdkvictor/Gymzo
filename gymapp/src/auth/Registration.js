@@ -90,6 +90,9 @@ export default class Registration extends Component {
     }
   }
 
+  redirectLogin = event => {
+    this.props.history.push("/register");
+  };
   render() {
     return (
       <div className="auth-wrapper login">
@@ -101,7 +104,6 @@ export default class Registration extends Component {
             placeholder="Email"
             value={this.state.email}
             onChange={this.handleChange}
-            required
           />
           <input
             type="password"
@@ -109,7 +111,6 @@ export default class Registration extends Component {
             placeholder="Password"
             value={this.state.password}
             onChange={this.handleChange}
-            required
           />
           <input
             type="password"
@@ -117,7 +118,6 @@ export default class Registration extends Component {
             placeholder="Password confirmation"
             value={this.state.password_confirmation}
             onChange={this.handleChange}
-            required
           />
           <input
             type="text"
@@ -125,7 +125,6 @@ export default class Registration extends Component {
             placeholder="name"
             value={this.state.name}
             onChange={this.handleChange}
-            required
           />
           <input
             type="text"
@@ -133,7 +132,6 @@ export default class Registration extends Component {
             placeholder="dateOfBirth"
             value={this.state.dateOfBirth}
             onChange={this.handleChange}
-            required
           />
           <input
             type="text"
@@ -141,7 +139,6 @@ export default class Registration extends Component {
             placeholder="sex"
             value={this.state.sex}
             onChange={this.handleChange}
-            required
           />
           <input
             type="text"
@@ -149,9 +146,11 @@ export default class Registration extends Component {
             placeholder="height"
             value={this.state.height}
             onChange={this.handleChange}
-            required
           />
           <button type="submit">Register</button>
+          <button type="submit" onClick={this.redirectLogin}>
+            Login
+          </button>
         </form>
       </div>
     );

@@ -68,7 +68,7 @@ export default class Login extends Component {
     });
   }
 
-  redirectEdit = event => {
+  redirectRegister = event => {
     this.props.history.push("/register");
   };
   render() {
@@ -82,7 +82,6 @@ export default class Login extends Component {
             placeholder="Email"
             value={this.state.email}
             onChange={this.handleChange}
-            required
           />
           <input
             type="password"
@@ -90,7 +89,6 @@ export default class Login extends Component {
             placeholder="Password"
             value={this.state.password}
             onChange={this.handleChange}
-            required
           />
           <button type="submit">Login</button>
           <button type="submit" onClick={this.redirectRegister}>

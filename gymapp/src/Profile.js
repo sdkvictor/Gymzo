@@ -84,11 +84,25 @@ export default class Profile extends Component {
     this.props.history.push("/editProfile");
   };
 
+  redirectWeight = event => {
+    this.props.history.push("/addWeight");
+  };
+  toHome = () => {
+    this.props.history.push("/");
+  };
+  logout = event => {
+    localStorage.clear();
+    this.props.history.push("/login");
+    alert("You have been logged out.");
+  };
   render() {
     return (
       <div className="body">
         <div>
           <ul className="navbar">
+            <button type="button" name="home" onClick={this.toHome}>
+              <li className="navbarElem">Home</li>
+            </button>
             <button type="button" name="dashboard" onClick={this.toDashboard}>
               <li className="navbarElem">Dashboard</li>
             </button>
@@ -97,6 +111,9 @@ export default class Profile extends Component {
             </button>
             <button type="button" name="profile" onClick={this.toProfile}>
               <li className="navbarElem">Profile</li>
+            </button>
+            <button className="btn btn-primary " onClick={this.logout}>
+              Logout
             </button>
           </ul>
         </div>
@@ -116,6 +133,16 @@ export default class Profile extends Component {
                 onClick={this.redirectEdit}
               >
                 Edit Profile
+              </button>{" "}
+            </p>
+            <p>
+              {" "}
+              <button
+                id="addWeightbtn"
+                className="btn btn-primary "
+                onClick={this.redirectWeight}
+              >
+                Add Weight Measurement
               </button>{" "}
             </p>
           </Card.Body>

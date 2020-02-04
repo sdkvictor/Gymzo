@@ -10,6 +10,7 @@ import NewExercise from "./NewExercise";
 import SeeRoutine from "./SeeRoutine";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
+import AddWeight from "./AddWeight";
 import { SERVER } from "./config";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -226,6 +227,18 @@ export default class App extends Component {
               path={"/editProfile"}
               render={props => (
                 <EditProfile
+                  {...props}
+                  user={this.state.user}
+                  handleSuccessfulAuth={this.handleSuccessfulAuth}
+                  loggedIn={this.state.loggedIn}
+                />
+              )}
+            />
+            <Route
+              exact
+              path={"/addWeight"}
+              render={props => (
+                <AddWeight
                   {...props}
                   user={this.state.user}
                   handleSuccessfulAuth={this.handleSuccessfulAuth}
