@@ -82,7 +82,6 @@ export default class Login extends Component {
             placeholder="Email"
             value={this.state.email}
             onChange={this.handleChange}
-            
           />
           <input
             type="password"
@@ -90,7 +89,6 @@ export default class Login extends Component {
             placeholder="Password"
             value={this.state.password}
             onChange={this.handleChange}
-            
           />
           <button type="submit">Login</button>
           <button type="submit" onClick={this.redirectRegister}>
