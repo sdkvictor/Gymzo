@@ -18,7 +18,8 @@ export default class Home extends Component {
             date: new Date(),
             todayWeekday:"",
             weights:[],
-            found:false
+            found:false,
+            prevWeights:[]
         }
     }
 
@@ -294,7 +295,7 @@ export default class Home extends Component {
                 throw new Error(response.statusText);
             })
             .then(responseJSON => {
-                return this.setWeight(responseJSON);
+                this.setWeight(responseJSON);
                 console.log("gets instances", responseJSON);
                 
             })
@@ -320,7 +321,7 @@ export default class Home extends Component {
                 console.log(response[i].weight);
             }
         }
-        return weight;  
+         this.state.prevWeights.push(weight);  
     }
 
     render() {
@@ -358,18 +359,8 @@ export default class Home extends Component {
                     <th>Repetitions</th>
                     <th>Weight</th>
                     <th> Save</th>
+                    <th> Saved Weight</th>
                 </tr>
-
-                    {this.state.exercises.map((ex, i) => {
-                        for(var j=0;j<ex.weekday.length;j++){
-                            if(ex.weekday[j]==weekday[today.getDay()-1]){
-                                console.log("found!");
-                                this.state.todayExercises.push(ex);
-                            }
-                        }
-                    return (
-                        <div></div>
-                    )})}
 
                     {this.state.todayExercises.map((ex, i) => {
                     return (
@@ -379,6 +370,7 @@ export default class Home extends Component {
                             <td> {ex.reps} </td>
                             <td> <input type="text" id={i} name={ex._id} onChange={this.updateWeight} className="weightIn" value={this.getWeight(ex._id)}/></td>
                             <td> <button id="saveWeight" value={i} name={ex._id} onClick={this.saveRoutine}> Save</button> </td>
+                            <td> {this.state.prevWeights[i]}</td>
                         </tr>
                     )
                     })}
