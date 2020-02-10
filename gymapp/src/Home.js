@@ -1,10 +1,11 @@
-
 import React, { Component } from 'react';
 import Registration from './auth/Registration';
 import Login from './auth/Login';
 import './css/home.css'
 import DatePicker from 'react-date-picker';
 import { useAlert } from 'react-alert'
+import { SERVER } from "./config";
+
 
 
 
@@ -24,96 +25,94 @@ export default class Home extends Component {
         }
     }
 
-
-  getRoutineName = id => {
-    let url = `${SERVER}/gymzoAPI/getMyRoutine?routineId=${id}`;
-    let settings = {
-      method: "GET"
-    };
-    fetch(url, settings)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
+    getRoutineName=(id)=>{
+        let url = `${SERVER}/gymzoAPI/getMyRoutine?routineId=${id}`;
+        let settings = {
+            method: "GET"
         }
-        throw new Error(response.statusText);
-      })
-      .then(responseJSON => {
-        this.setState({ routineName: responseJSON.name });
-        console.log(responseJSON);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-  logout = event => {
-    localStorage.clear();
-    this.props.history.push("/login");
-    alert("You have been logged out.");
-  };
-  updateExercises = id => {
-    console.log("updating exercises array");
-
-    let url = `${SERVER}/gymzoAPI/getAllExercises/?routineId=${id}`;
-    let settings = {
-      method: "GET"
-    };
-    fetch(url, settings)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJSON => {
-        this.setState({ exercises: responseJSON });
-        console.log(responseJSON);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-  getUser() {
-    let url = `${SERVER}/gymzoAPI/profile/?userId=${this.props.user.id}`;
-    let settings = {
-      method: "GET"
-    };
-    fetch(url, settings)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJSON => {
-        this.handleDefaultRoutine(responseJSON);
-        console.log("gets user", responseJSON);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  handleDefaultRoutine = response => {
-    this.getDefault(response.defaultRoutine);
-  };
-
-  getDefault(defaultRoutine) {
-    if (defaultRoutine == undefined) {
-      this.setState({
-        routineName: "No default routine has been defined"
-      });
-    } else {
-      console.log("default routine", defaultRoutine);
-      this.getRoutineName(defaultRoutine._id);
-      this.updateExercises(defaultRoutine._id);
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.setState({routineName: responseJSON.name});
+                console.log(responseJSON);
+                
+            })
+            .catch(error => {
+                console.log(error);
+            })
     }
-  }
 
+    updateExercises = (id) =>{
+        console.log("updating exercises array");
+
+        let url = `${SERVER}/gymzoAPI/getAllExercises/?routineId=${id}`;
+        let settings = {
+            method: "GET"
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.setState({exercises: responseJSON});
+                console.log(responseJSON);
+                
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
+    getUser(){
+        let url = `${SERVER}/gymzoAPI/profile/?userId=${this.props.user.id}`;
+        let settings = {
+            method: "GET"
+        }
+        fetch(url, settings)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJSON => {
+                this.handleDefaultRoutine(responseJSON);
+                console.log("gets user", responseJSON);
+                
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
+    handleDefaultRoutine=(response)=>{
+        this.getDefault(response.defaultRoutine);
+    }
+
+    getDefault(defaultRoutine){
+        if(defaultRoutine==undefined){
+            this.setState({
+                routineName: "No default routine has been defined"
+            })
+        }
+        else{
+            console.log("default routine", defaultRoutine);
+            this.getRoutineName(defaultRoutine._id);
+            this.updateExercises(defaultRoutine._id);
+        }
+    }
 
     updateInstWeight(response, w, id){
         console.log("updating instance", response);
-        let url = `http://localhost:8080/gymzoAPI/updateInstanceExercise/?instanceExerciseId=${id}`;
+        let url = `${SERVER}/gymzoAPI/updateInstanceExercise/?instanceExerciseId=${id}`;
 
         let settings = {
             method: "PUT",
@@ -141,7 +140,7 @@ export default class Home extends Component {
     }
 
     createInstance(index, id){
-        let url = "http://localhost:8080/gymzoAPI/createInstanceExercise";
+        let url = `${SERVER}/gymzoAPI/createInstanceExercise`;
 
         let settings = {
             method: "POST",
@@ -180,7 +179,7 @@ export default class Home extends Component {
         event.preventDefault();
         let id = event.target.name;
         let w = event.target.value;
-        let url = `http://localhost:8080/gymzoAPI/getAllInstanceExercises/?exerciseId=${event.target.name}`;
+        let url = `${SERVER}/gymzoAPI/getAllInstanceExercises/?exerciseId=${event.target.name}`;
         let settings = {
             method: "GET"
         }
@@ -233,49 +232,52 @@ export default class Home extends Component {
         console.log("see routines");
     }
 
-
-  toRoutines = () => {
-    this.props.history.push("/routines");
-  };
-  toDashboard = () => {
-    this.props.history.push("/dashboard");
-  };
-  toProfile = () => {
-    this.props.history.push("/profile");
-  };
-
-  componentDidMount = () => {
-    this.getUser();
-    this.getRoutineName();
-    this.updateExercises();
-    this.checkLoginStatus();
-    this.checkTodayEx();
-  };
-  componentDidUpdate(prevProps) {
-    if (this.props.user.id !== prevProps.user.id) {
-      this.checkTodayEx();
+    toRoutines=()=>{
+        this.props.history.push("/routines");
     }
-  }
-
-
-  checkTodayEx = () => {
-    console.log("check today ex", this.state.todayExercises);
-    
-  };
-  checkLoginStatus = () => {
-    if (!this.props.loggedIn) {
-      this.props.history.push("/login");
+    toDashboard=()=>{
+        this.props.history.push("/dashboard");
     }
-  };
-  toHome = () => {
-    this.props.history.push("/");
-  };
+    toProfile=()=>{
+        this.props.history.push("/profile");
+    }
 
+    componentDidMount=()=>{
+        this.getUser();
+        this.getRoutineName();
+        this.updateExercises();
+        this.checkLoginStatus();
+        this.checkTodayEx();
+    }
+    componentDidUpdate(prevProps) {
+        if (this.props.user.id !== prevProps.user.id) {
+            this.checkTodayEx();
+        }
+      }
 
-  onChange = date => {
-    this.setState({ date });
-    this.setState({ todayExercises: [] });
-  };
+    checkTodayEx=()=>{
+        console.log("check today ex", this.state.todayExercises);
+        let emptyArray=[];
+        for(var i=0;i<this.state.todayExercises.length;i++){
+            if(emptyArray.length<this.state.todayExercises.length){
+                emptyArray.push(0);
+            }
+        }
+        this.setState({
+            weights:emptyArray
+        })
+    }
+
+    checkLoginStatus = () => {
+        if (!this.props.loggedIn) {
+          this.props.history.push("/login");
+        }
+      }
+
+    onChange = (date) => {
+        this.setState({ date });
+        this.setState({todayExercises:[]});
+    }
 
     updateWeight=(event)=>{
         this.state.weights[event.target.id] = event.target.value;
@@ -362,6 +364,17 @@ export default class Home extends Component {
                     <th> Saved Weight</th>
                 </tr>
 
+                {this.state.exercises.map((ex, i) => {
+                        for(var j=0;j<ex.weekday.length;j++){
+                            if(ex.weekday[j]==weekday[today.getDay()-1]){
+                                console.log("found!");
+                                this.state.todayExercises.push(ex);
+                            }
+                        }
+                    return (
+                        <div></div>
+                    )})}
+
                     {this.state.todayExercises.map((ex, i) => {
                     return (
                         <tr>
@@ -378,9 +391,7 @@ export default class Home extends Component {
                 </tbody>
             </table>
         </div>
-
         </div>
-      </div>
-    );
-  }
+        );
+    }
 }
