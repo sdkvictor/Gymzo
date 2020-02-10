@@ -62,6 +62,11 @@ export default class EditProfile extends Component {
     this.props.history.push("/profile");
   }
 
+  logout = event => {
+    localStorage.clear();
+    this.props.history.push("/login");
+    alert("You have been logged out.");
+  };
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
@@ -79,12 +84,17 @@ export default class EditProfile extends Component {
   toProfile = () => {
     this.props.history.push("/profile");
   };
-
+  toHome = () => {
+    this.props.history.push("/");
+  };
   render() {
     return (
       <div className="body">
         <div>
           <ul className="navbar">
+            <button type="button" name="home" onClick={this.toHome}>
+              <li className="navbarElem">Home</li>
+            </button>
             <button type="button" name="dashboard" onClick={this.toDashboard}>
               <li className="navbarElem">Dashboard</li>
             </button>
@@ -93,6 +103,9 @@ export default class EditProfile extends Component {
             </button>
             <button type="button" name="profile" onClick={this.toProfile}>
               <li className="navbarElem">Profile</li>
+            </button>
+            <button className="btn btn-primary " onClick={this.logout}>
+              Logout
             </button>
           </ul>
         </div>

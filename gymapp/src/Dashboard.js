@@ -48,8 +48,8 @@ export default class Dashboard extends Component {
     if (!this.props.loggedIn) {
       this.props.history.push("/login");
     }
-  }
-  
+  };
+
   renderWeightEvolution = () => {
     let url = `${SERVER}/gymzoAPI/getAllWeights/?userId=${this.props.user.id}`;
 
@@ -161,6 +161,14 @@ export default class Dashboard extends Component {
   toProfile = () => {
     this.props.history.push("/profile");
   };
+  toHome = () => {
+    this.props.history.push("/");
+  };
+  logout = event => {
+    localStorage.clear();
+    this.props.history.push("/login");
+    alert("You have been logged out.");
+  };
   render() {
     var n = this.state.currentWeight / (this.state.currentHeight ^ 2);
     var low = this.state.lowStat * 1.5 - 1.55;
@@ -173,6 +181,9 @@ export default class Dashboard extends Component {
       <div className="body">
         <div>
           <ul className="navbar">
+            <button type="button" name="home" onClick={this.toHome}>
+              <li className="navbarElem">Home</li>
+            </button>
             <button type="button" name="dashboard" onClick={this.toDashboard}>
               <li className="navbarElem">Dashboard</li>
             </button>
@@ -181,6 +192,9 @@ export default class Dashboard extends Component {
             </button>
             <button type="button" name="profile" onClick={this.toProfile}>
               <li className="navbarElem">Profile</li>
+            </button>
+            <button className="btn btn-primary " onClick={this.logout}>
+              Logout
             </button>
           </ul>
         </div>
